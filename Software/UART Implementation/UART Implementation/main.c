@@ -7,6 +7,7 @@
 
 #define F_CPU  2000000UL
 #define UPPERLIM 300
+#define  BAUD 9600
 
 // Example Values for Power, Current and Voltage
 #define rmsVoltage 30
@@ -73,46 +74,29 @@ void transmit_decimal(uint16_t dec_val){
 	
 }
 
+char[] string_from_3_dig(uint16_t dec_val){
+	char output_string[3] = {};
+	output_string[0] = ((dec_val / 100) % 10) + 48;
+	output_string[1] = ((dec_val / 10) % 10) + 48;
+	output_string[2] = (dec_val % 10) + 48;
+	return output_string;
+}
+
+void transmit_string(char[] text, uint8_t length){
+	for (uint8_t i; i<length; i++){
+		usart_transmit(text[i]);
+	}
+}
+
 int main(void)
 {
+	// Initialize the UART
 	usart_init(12);
-	// Find Prime numbers
-	static uint16_t primes[63];
-	volatile uint16_t curNumber = 2;
-	volatile uint8_t curIndex = 0;
-	volatile bool curPrime = true;
-	while (true){
-		curPrime = true;
-		for (uint16_t value = 2; value<curNumber; value++){
-			if (curNumber % value == 0){
-				curPrime = false;
-				break;
-			}
-		}
-		if (curPrime){
-			
-			primes[curIndex] = curNumber;
-			curIndex++;
-		}
-		curNumber++;
-		if (curNumber>UPPERLIM){
-			break;
-		}
-	}
-	
-	// Main Program Loop
-	curIndex = 0;
+	volatile uint32_t value = (F_CPU/(16*BAUD)) - 1;
 	while (1)
 	{
-		if (!(UCSR0A & 1 << UDRE0)){
-			_delay_ms(1);
-			continue;
-			} else{
-			transmit_decimal(primes[curIndex]);
-			curIndex++;
-			if(curIndex>62) curIndex = 0;
-			_delay_ms(500);
-		}
+		_delay_ms(1000);
+		transmit_string("RMS Voltage is:" + );
 	}
 }
 
