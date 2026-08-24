@@ -4,6 +4,7 @@
  * Created: 23/08/2026 8:34:48 pm
  * Author : Team 31 - Connor Fleming
  */ 
+#include <string.h>
 
 #define F_CPU  2000000UL
 #define UPPERLIM 300
@@ -18,6 +19,10 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+
+
 
 volatile uint16_t checkVal;
 void usart_init(uint16_t ubrr){
@@ -74,17 +79,22 @@ void transmit_decimal(uint16_t dec_val){
 	
 }
 
-char[] string_from_3_dig(uint16_t dec_val){
-	char output_string[3] = {};
-	output_string[0] = ((dec_val / 100) % 10) + 48;
-	output_string[1] = ((dec_val / 10) % 10) + 48;
-	output_string[2] = (dec_val % 10) + 48;
-	return output_string;
+volatile char string_3_dig[3] = {};
+char* string_from_3_dig(uint16_t dec_val){
+	string_3_dig[0] = ((dec_val / 100) % 10) + 48;
+	string_3_dig[1] = ((dec_val / 10) % 10) + 48;
+	string_3_dig[2] = (dec_val % 10) + 48;
+	return string_3_dig;
 }
 
-void transmit_string(char[] text, uint8_t length){
-	for (uint8_t i; i<length; i++){
+void transmit_string_with_val(char text[], char value[], uint8_t length){
+	for (uint8_t i = 0; i<length; i++){
 		usart_transmit(text[i]);
+		_delay_ms(5);
+	}
+	for (uint8_t n = 0; n<3; n++){
+		usart_transmit(value[n]);
+		_delay_ms(5);
 	}
 }
 
@@ -92,11 +102,21 @@ int main(void)
 {
 	// Initialize the UART
 	usart_init(12);
-	volatile uint32_t value = (F_CPU/(16*BAUD)) - 1;
+	volatile uint32_t value = ((F_CPU/(16*BAUD)) - 1);
 	while (1)
 	{
+		
 		_delay_ms(1000);
-		transmit_string("RMS Voltage is:" + );
+		printf("hello?");
+		transmit_string_with_val("RMS Voltage is: ", string_from_3_dig(rmsVoltage), strlen("RMS Voltage is: "));
+		usart_transmit('\n');
+		usart_transmit('\r');
+		transmit_string_with_val("Peak Current is: ", string_from_3_dig(peakCurrent), strlen("Peak Current is: "));
+		usart_transmit('\n');
+		usart_transmit('\r');
+		transmit_string_with_val("Power is: ", string_from_3_dig(Power), strlen("Power is: "));
+		usart_transmit('\n');
+		usart_transmit('\r');
 	}
 }
 
