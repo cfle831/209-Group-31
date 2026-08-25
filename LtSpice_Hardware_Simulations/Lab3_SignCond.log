@@ -1,6 +1,6 @@
 LTspice 26.0.2 for Windows
-Circuit: C:\users\phoenixma\Documents\university\COMPSYS209-labs\Labs\Lab3_SigCond\Spice\Lab3_SignCond.net
-Start Time: Tue Aug 25 15:11:51 2026
+Circuit: C:\Users\ferre\OneDrive\Documents\Uni\Year II\Sem 2\ELECTENG 209\209-Group-31\LtSpice_Hardware_Simulations\Lab3_SignCond.net
+Start Time: Tue Aug 25 16:27:30 2026
 solver = Normal
 Maximum thread count: 8
 tnom = 27
@@ -9,15 +9,13 @@ method = trap
 Early termination of direct N-R iteration.
 Direct Newton iteration failed to find operating point.
 Starting Gmin stepping
-Gmin stepping failed to find operating point. Use".option gminsteps=0" to skip all Gmin stepping.
-Starting source stepping with srcstepmethod=0
-Source stepping succeeded in finding the operating point.
+Gmin stepping succeeded in finding the operating point.
 
-Total elapsed time: 18.758 seconds.
+Total elapsed time: 3.312 seconds.
 
 Files loaded:
-C:\users\phoenixma\Documents\university\COMPSYS209-labs\Labs\Lab3_SigCond\Spice\Lab3_SignCond.net
-C:\users\phoenixma\AppData\Local\LTspice\lib\cmp\standard.dio
-C:\users\phoenixma\Documents\university\COMPSYS209-labs\Labs\Lab3_SigCond\Spice\LM324.lib
-C:\users\phoenixma\AppData\Local\LTspice\lib\sub\LT1083.lib
+C:\Users\ferre\OneDrive\Documents\Uni\Year II\Sem 2\ELECTENG 209\209-Group-31\LtSpice_Hardware_Simulations\Lab3_SignCond.net
+C:\Users\ferre\AppData\Local\LTspice\lib\cmp\standard.dio
+C:\Users\ferre\OneDrive\Documents\Uni\Year II\Sem 2\ELECTENG 209\209-Group-31\LtSpice_Hardware_Simulations\LM324.lib
+C:\Users\ferre\AppData\Local\LTspice\lib\sub\LT1083.lib
 
