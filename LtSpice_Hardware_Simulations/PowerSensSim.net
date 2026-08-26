@@ -3,38 +3,47 @@
 Vsupply Vac 0 SINE(0 21.78 500)
 X§Reg 0 5V Vin LT1085-5 ;§pnba GND)OUT)IN
 RL 5V 0 50
-Rin Vin N002 10
-D1 Vac N002 1N4148
+Rin Vin N003 10
+D1 Vac N003 1N4148
 Cin Vin 0 47µ Rser=0.001
 Cout 5V 0 10µ Rser=0.001
 V3 Vsens 0 SINE(0 0.1 500) AC .1 0
-Rload N003 Vii 30
-Lload Vac N003 4mH
+Rload N004 Vii 30
+Lload Vac N004 4mH
 Rs Vii 0 0.5
 Ra Vac Vvi 21k
 Rb Vvi 0 1k
-X§U21 N005 2v1 5V 0 2v1 LM324 ;§pnba In+)In-)V+)V-)OUT
-R1a3 N007 Vii 200k
-R1b3 N006 0 200k
-R2b3 Vvo N006 500k
-R2a3 2V1 N007 500k
-X§U1 N004 N001 5V 0 Vio LM324 ;§pnba In+)In-)V+)V-)OUT
-R1a4 N004 Vvi 100k
-R1b4 N001 0 100k
-R2b4 Vio N001 100k
-R2a4 2V1 N004 100k
+X§U21 N007 2v1 5V 0 2v1 LM324 ;§pnba In+)In-)V+)V-)OUT
+R1a3 N009 Vii 200k
+R1b3 N008 0 200k
+R2b3 Vvo N008 500k
+R2a3 2V1 N009 500k
+X§U1 N005 N002 5V 0 Vio LM324 ;§pnba In+)In-)V+)V-)OUT
+R1a4 N005 Vvi 100k
+R1b4 N002 0 100k
+R2b4 Vio N002 100k
+R2a4 2V1 N005 100k
 Rf Vfi Vvo 15k
 Cf 0 Vfi 1nF
 V4 Vopamp 0 SINE(2.1 1 500) AC 1 0
-R2 N005 0 33k
-R1 5V N005 47k
-C1 N005 0 10µ
-X§U3 N008 2v1 5V 0 Vzc LM324 ;§pnba In+)In-)V+)V-)OUT
-R3 Vzc N008 50k
-R4 N008 Vvo 1k
+R2 N007 0 33k
+R1 5V N007 47k
+C1 N007 0 10µ
+X§U3 N010 2v1 5V 0 Vzc LM324 ;§pnba In+)In-)V+)V-)OUT
+R3 Vzc N010 68k
+R4 N010 Vvo 3.9k
 Rf1 Vfv Vio 15k
 Cf1 0 Vfv 1nF
-X§U2 N007 N006 5V 0 Vvo LM324 ;§pnba In+)In-)V+)V-)OUT
+X§U2 N009 N008 5V 0 Vvo LM324 ;§pnba In+)In-)V+)V-)OUT
+Rf2 Vft1 NC_01 15k
+Cf2 0 Vft1 1nF
+X§U4 N006 N001 5V 0 Vft2 LM324 ;§pnba In+)In-)V+)V-)OUT
+R5 N006 0 100k
+R6 N001 0 100k
+R7 Vft2 N001 100k
+R8 2V1 N006 100k
+C2 N006 0 5nF
+C3 Vft2 N001 5nf
 .model D D
 .lib C:\users\phoenixma\AppData\Local\LTspice\lib\cmp\standard.dio
 * .ac dec 30 1 1Meg
@@ -52,7 +61,7 @@ X§U2 N007 N006 5V 0 Vvo LM324 ;§pnba In+)In-)V+)V-)OUT
 .tran 0 0.2 0 0.01m
 .ic V(Vin)=8
 * Voltage Regulator Circuit
-* Prototype for Zero crossing Comparator
+* Zero crossing Comparator
 * Low Pass Filter Circuit
 * Library below included based on ModelFile attribute of instance X§Reg (C:\users\phoenixma\AppData\Local\LTspice\lib\sym\PowerProducts\LT1085-5.asy)
 .lib LT1083.lib
