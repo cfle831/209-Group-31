@@ -14,17 +14,17 @@ Rs Vii 0 0.5
 Ra Vac Vvi 21k
 Rb Vvi 0 1k
 X§U21 Vvd 2v1 5V 0 2v1 LM324 ;§pnba In+)In-)V+)V-)OUT
-R1a3 N010 Vii 200k
-R1b3 N008 0 200k
-R2b3 Vio N008 500k
-R2a3 2V1 N010 500k
+R1a3 N010 Vii 22k
+R1b3 N008 0 22k
+R2b3 Vio N008 56k
+R2a3 2V1 N010 56k
 X§U1 N004 N002 5V 0 Vvo LM324 ;§pnba In+)In-)V+)V-)OUT
 R1a4 N004 Vvi 100k
 R1b4 N002 0 100k
 R2b4 Vvo N002 100k
 R2a4 2V1 N004 100k
 Rf Vfi Vio 15k
-Cf 0 Vfi 15n
+Cf 0 Vfi 15nF
 V4 Vopamp 0 SINE(2.1 1 500) AC 1 0
 R2 Vvd 0 33k
 R1 5V Vvd 47k
@@ -39,7 +39,7 @@ R7 Vft2 N006 100k
 R8 2V1 N011 100k
 C2 N011 0 5nF
 C3 Vft2 N006 5nf
-V§Noise Vac N009 SINE(0 2 20k)
+V§Noise Vac N009 SINE(0 1 10k)
 X§U5 N005 2v1 5V 0 Vzcv LM324 ;§pnba In+)In-)V+)V-)OUT
 R9 Vzcv N005 39k
 R10 N005 Vvo 1k
