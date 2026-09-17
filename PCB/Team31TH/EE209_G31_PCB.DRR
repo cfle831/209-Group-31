@@ -1,0 +1,26 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: EE209_G31_PCB.PcbDoc   17/09/2026  14:12:03
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : EE209_G31_PCB-RoundHoles.TXT
+ASCII SlotHoles File : EE209_G31_PCB-SlotHoles.TXT
+EIA File   : EE209_G31_PCB.DRL
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      25mil (0.635mm)                                           Slot              3         PTH        1.17inch (29.68mm)
+T2      28mil (0.701mm)                                           Round             8         PTH        3.30inch (83.73mm)
+T3      28mil (0.711mm)                                           Round             12        PTH        9.00inch (228.53mm)
+T4      32mil (0.8mm)                                             Round             74        PTH        22.39inch (568.74mm)
+T5      35mil (0.889mm)                                           Round             36        PTH        8.30inch (210.82mm)
+T6      35mil (0.899mm)                                           Round             16        PTH        3.27inch (83.04mm)
+T7      39mil (1.001mm)                                           Round             41        PTH        11.25inch (285.85mm)
+T8      41mil (1.049mm)                                           Round             2         PTH        0.43inch (10.88mm)
+T9      43mil (1.1mm)                                             Round             3         PTH        0.20inch (5.08mm)
+T10     122mil (3.099mm)                                          Round             4         PTH        9.64inch (244.75mm)
+T11     250mil (6.35mm)                                           Round             2         PTH        0.70inch (17.78mm)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              201
+
+Total Processing Time (hh:mm:ss) : 00:00:01
