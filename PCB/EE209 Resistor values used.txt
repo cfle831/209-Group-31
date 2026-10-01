@@ -1,0 +1,7 @@
+EE209 Resistor values used
+Resistor (Intended Value) Value used
+R1 (47k) - 46.2k
+
+R9 (100k) - 99.7k
+
+R11 (100k) - 100.0k
