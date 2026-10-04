@@ -16,7 +16,8 @@
 
 #define estimated_sample_time 104f/1000000f
 #define samples_to_take 40
-
+// Approximates a step between index and the next value (either forwards or backwards)
+// Used to better align the current and voltage data sets
 uint16_t approximate_step(bool d_backwards, uint16_t values[], uint8_t index){
 	uint16_t return_value;
 	if (d_backwards){
@@ -55,7 +56,7 @@ int main(void)
 	uint16_t current[samples_to_take];
 	uint8_t index = 0;	
     /* Replace with your application code */
-	adc_read(0); // dummy conversion to settle values
+/*	adc_read(0); // dummy conversion to settle values
     while (1) 
     {
 		voltage[index] = adc_convert_mv(adc_read(0));
@@ -75,4 +76,5 @@ int main(void)
 	transmit_string(decimal_to_char(calculate_RMS(voltage, samples_to_take)));
 	
 }*/
+
 
