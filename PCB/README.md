@@ -6,4 +6,11 @@ zip file for production query are stored here.
 Changes may occur due to PCB related queries, until things are finalised and order of production gets placed, even then the real
 point at which things settle should be when the pcb gets physically produced.
 
+
+
+
 ```
+
+# To Do 
+ - [x] Test Regulator and 2.1V circuit
+ - [] Test Source Sensing Circuit
