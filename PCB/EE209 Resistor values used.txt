@@ -1,8 +1,12 @@
 EE209 Resistor values used
 Resistor (Intended Value) Value used
-R1 
+R1 (47k) - 46.97k
 R2 (82k) - 82.09k
 R3 (3.9k) - 3.878k
 R9 (100k) - 99.7k
+Rs (3x1.5 --> 0.5) - 0.502
+ - 1.51
+ - 1.51
+ - 1.499
 
 R11 (100k) - 100.0k

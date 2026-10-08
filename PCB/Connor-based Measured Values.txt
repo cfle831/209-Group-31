@@ -1,0 +1,9 @@
+For Vvsense:
+Vac : 13.36 Vrms
+Vvs : 0.6007 Vrms
+A=~0.04
+In expected range
+
+For Visense
+Vac : 13.4 Vrms
+Vis : 

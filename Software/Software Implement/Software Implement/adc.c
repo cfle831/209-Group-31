@@ -14,8 +14,43 @@
 #include <math.h>
 #include <float.h>
 
-#define estimated_sample_time 104f/1000000f
-#define samples_to_take 40
+#define estimated_sample_time 0.000104f // Accurate for prescaler 16
+#define samples_to_take 40 //  Possibly should be changed 
+
+/* in order to acheive a *maximum* sampling frequency of 10kHz, samples must be taken ~100us apart */
+/* Sampling frequency must not be a multiple of 500Hz*/
+
+void adc_init(void){
+	// Enable ADC converter
+	ADCSRA = (1<<ADEN);
+	ADMUX = (1 << REFS0);
+	// Clock prescaler of 16
+	ADCSRA |= (1 << ADPS2);
+	ADCSRB = 0x00;
+}
+
+uint16_t adc_read(uint8_t chan){
+	// Select channel from input
+	ADMUX &= ~((1<<MUX3) | (1<<MUX2) | (1<<MUX1) | (1<<MUX0));
+	ADMUX |= chan;
+	
+	// Start conversion
+	ADCSRA |= (1<<ADSC);
+	// Wait
+	while(!(ADCSRA  & (1<<ADIF)));
+	uint8_t return_value_low = ADCL;
+	uint8_t return_value_high = ADCH;
+	uint16_t return_value = (((uint16_t)return_value_high << 8) | return_value_low);
+	return return_value;
+	
+}
+
+uint16_t adc_convert_mv(uint16_t adc_count){
+	uint32_t value = (uint32_t)adc_count;
+	value = (((uint32_t)value*V_REF*1000) / (1023));
+	return value;
+}
+
 // Approximates a step between index and the next value (either forwards or backwards)
 // Used to better align the current and voltage data sets
 uint16_t approximate_step(bool d_backwards, uint16_t values[], uint8_t index){
@@ -46,6 +81,18 @@ float calculate_RMS(uint16_t values[], uint8_t samples){
 	float integration_time = (float)samples;
 	
 	return (float)(sqrtf(total_sum/integration_time));
+}
+
+uint16_t calculate_peak(uint16_t values[], uint8_t samples){
+	// Just takes the largest value within the sample set
+	// Possible improvement could instead use if value[i-1] < value[i] < value[i+1] & and averaging these peak values.
+	uint16_t peak_value = 0;
+	for(i = 0; i<samples; i++){
+		if (values[i] > peak_value){
+			peak_value = values[i];
+		}
+	}
+	
 }
 /*
 int main(void)
