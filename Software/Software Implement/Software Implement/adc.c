@@ -4,7 +4,7 @@
  * Created: 12/09/2026 1:44:14 pm
  * Author : Loelene
  */ 
-
+#define F_CPU 2000000UL
 #include "adc.h"
 #include "UART.h"
 
@@ -87,11 +87,12 @@ uint16_t calculate_peak(uint16_t values[], uint8_t samples){
 	// Just takes the largest value within the sample set
 	// Possible improvement could instead use if value[i-1] < value[i] < value[i+1] & and averaging these peak values.
 	uint16_t peak_value = 0;
-	for(i = 0; i<samples; i++){
+	for(uint8_t i = 0; i<samples; i++){
 		if (values[i] > peak_value){
 			peak_value = values[i];
 		}
 	}
+	return peak_value;
 	
 }
 /*
@@ -102,8 +103,8 @@ int main(void)
 	uint16_t voltage[samples_to_take];
 	uint16_t current[samples_to_take];
 	uint8_t index = 0;	
-    /* Replace with your application code */
-/*	adc_read(0); // dummy conversion to settle values
+    // Replace with your application code 
+//	adc_read(0); // dummy conversion to settle values
     while (1) 
     {
 		voltage[index] = adc_convert_mv(adc_read(0));

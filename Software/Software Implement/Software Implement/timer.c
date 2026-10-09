@@ -1,8 +1,16 @@
 #define F_CPU 2000000UL
 
 #include "timer.h"
+#include <avr/interrupt.h>
+#include <avr/io.h>
+extern volatile uint8_t display_flag;
+volatile uint16_t overflow_count = 0;
+ISR(TIMER2_COMPA_vect){
+	display_flag = 1;
+	overflow_count++;
+}
 
-void pwm_init(void){
+void pwm_timer1_init(void){
 	
 	DDRB |= (1 << DDB2);
 	
@@ -14,10 +22,20 @@ void pwm_init(void){
 	SIXTEEN_BIT_REG_SET(OCR1BH, OCR1BL, 10000);
 }
 
-void pwm_set_duty_cycle(uint8_t percentage){
+void pwm_set_duty_cycle_timer1(uint8_t percentage){
 	if ((percentage > 100) || (percentage < 0)) {
 		return;
 	}
 	uint16_t OC1B = 200*percentage;
 	SIXTEEN_BIT_REG_SET(OCR1BH, OCR1BL, OC1B);
+}
+
+
+
+void timer2_init(){
+	TCCR2A |= (1<<WGM21);
+	TCCR2B |= (1<<CS22); // Prescaler 64
+	OCR2A = 14; // For ~ 500us                                                                                                
+	TCNT2 = 1;
+	TIMSK2 |= (1<<OCIE2A);	
 }

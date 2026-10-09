@@ -40,7 +40,7 @@ void set_seg_all_digits(uint8_t value){
 	PORTD = 0;
 	send_next_char(value);
 }
-void display_number(uint16_t number){
+void display_number(uint16_t number){ // Takes ~2ms per call
 	set_seg((number/1000) % 10,1);
 	_delay_us(500);
 	set_seg((number/100) % 10,2);
@@ -52,7 +52,11 @@ void display_number(uint16_t number){
 }
 
 void display_init(){
-	DDRC |= 0x38;
+	/*DDRC |= 0x38;
 	DDRD |= 0xF0;
+	*/
+	DDRD = 0xFF;
+	DDRC= 0xFF;
+	DDRB = 0xFF;
 }
 
