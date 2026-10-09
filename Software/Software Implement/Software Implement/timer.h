@@ -13,9 +13,10 @@
 	}
 	
 // Initialises PWM registers
-void pwm_init();
+void pwm_timer1_init();
 
 // Changes OCR1B based on the desire duty cycle
-void pwm_set_duty_cycle(uint8_t percentage);
+void pwm_set_duty_cycle_timer1(uint8_t percentage);
+void timer2_init();
 
 #endif
