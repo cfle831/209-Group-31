@@ -1,0 +1,24 @@
+EE209 Resistor values used
+Resistor (Intended Value) Value used
+R1 (47k) - 46.97k
+R2 (82k) - 82.09k
+R3 (3.9k) - 3.878k
+R9 (100k) - 99.7k
+Rs (3x1.5 --> 0.5) - 0.502
+ - 1.51
+ - 1.51
+ - 1.499
+
+R11 (100k) - 100.0k
+
+EE209 Capacitor values used
+C11 (100nF) - 101.4nF
+C1 (10uF) - 8.9uF
+C13 (100nF) - 100.7nF
+
+
+EE209 Diodes used
+D1 (2.7V) - 2.172V, threshold 0.72V
+D2 (2.7V) - 2.226V, threshold 0.72V
+D3 (2.7V) - 2.147V, threshold 0.715V
+D4 (2.7V) - 2.210V, threshold 0.711V
