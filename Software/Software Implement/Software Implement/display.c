@@ -49,6 +49,11 @@ void display_number(uint16_t number){ // Takes ~2ms per call
 	_delay_us(500);
 	set_seg(number % 10,4);
 	_delay_us(500);
+	disable_seg(4);
+}
+
+void disable_seg(uint8_t dig){
+	PORTD |= (dig_pins[dig - 1]);
 }
 
 void display_init(){

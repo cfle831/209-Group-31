@@ -48,7 +48,7 @@ int main(void)
 		}
 		
 		/* ADC */
-		/*
+		
 		if (!adc_samples_full){
 			voltage[index] = adc_convert_mv(adc_read(0));
 			current[index] = adc_convert_mv(adc_read(1));
@@ -60,15 +60,14 @@ int main(void)
 		}else{
 			if (index < SAMPLES_TO_TAKE){
 				
-			transmit_string(decimal_to_char(voltage[index]));
-			transmit_new_line();
-			index++;
+				transmit_string(decimal_to_char(voltage[index]));
+				transmit_new_line();
+				index++;
 			}
 		}
 		
-		transmit_string(decimal_to_char(200));
-		transmit_new_line();
-		*/
+	
+		
     }
 }
 
