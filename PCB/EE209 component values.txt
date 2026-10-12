@@ -45,3 +45,9 @@ Orange / Orange / Black / Brown / Brown
 so that translates to 3.3k ohms
 and then if we do 5 * 3.3/(50 + 3.3) = 0.273V, which is ~300mV that we got by measuring the thing irl
 which explain why thefu ohe offset is 0.3v
+
+2026/10/12 12.00:
+Turns out R13 had the wrong value. Downgrading it from 100k ohm to 15k ohm enabled zero crossing to work.
+The Schmmit trigger has a certain gain, given the previous resistance of R13 was 100k, despite the ratio was
+meant to be ~1:39(ratio between R13 and R18). We actually calculated this before but was hallucinating on the day
+when we made the schematici on Altium Designer.
