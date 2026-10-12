@@ -27,6 +27,7 @@ void adc_init(void){
 	// Clock prescaler of 16
 	ADCSRA |= (1 << ADPS2);
 	ADCSRB = 0x00;
+	DDRC |= 0x3F; // For ADC pins as input
 }
 
 uint16_t adc_read(uint8_t chan){
@@ -104,7 +105,7 @@ int main(void)
 	uint16_t current[samples_to_take];
 	uint8_t index = 0;	
     // Replace with your application code 
-//	adc_read(0); // dummy conversion to settle values
+	//adc_read(0); // dummy conversion to settle values
     while (1) 
     {
 		voltage[index] = adc_convert_mv(adc_read(0));

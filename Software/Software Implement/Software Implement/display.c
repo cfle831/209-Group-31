@@ -56,7 +56,7 @@ void display_init(){
 	DDRD |= 0xF0;
 	*/
 	DDRD = 0xFF;
-	DDRC= 0xFF;
+	DDRC= 0x0;
 	DDRB = 0xFF;
 }
 
