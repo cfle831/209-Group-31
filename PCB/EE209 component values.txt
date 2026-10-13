@@ -1,8 +1,9 @@
 EE209 Resistor values used
 Resistor (Intended Value) Value used
-R1 (47k) - 46.97k
+R1 (47k) - 46.3k
 R2 (82k) - 82.09k
 R3 (3.9k) - 3.878k
+R7 (33k) - 33.3k
 R8 (56k) - 54.82k
 R9 (100k) - 99.7k
 Rs (3x1.5 --> 0.5) - 0.502
@@ -14,7 +15,7 @@ R11 (100k) - 100.0k
 R12 (15k) - 15.11k
 R14 (22k) - 21.93k
 R16 (56k) - 55.44k
-
+R19 (22) - 22.3
 
 EE209 Capacitor values used
 C11 (100nF) - 101.4nF
