@@ -65,3 +65,7 @@ void display_init(){
 	DDRB = 0xFF;
 }
 
+void update_display_value(uint16_t number){
+	// TODO 
+}
+

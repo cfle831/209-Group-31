@@ -63,6 +63,11 @@ int main(void)
 				transmit_string(decimal_to_char(voltage[index]));
 				transmit_new_line();
 				index++;
+			} else{ // TESTING
+				transmit_text("----", 4);
+				transmit_new_line();
+				transmit_string(decimal_to_char(calculate_RMS(voltage, SAMPLES_TO_TAKE)));
+				break;
 			}
 		}
 		
