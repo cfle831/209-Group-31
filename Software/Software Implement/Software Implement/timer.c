@@ -1,11 +1,12 @@
 #define F_CPU 2000000UL
 
 #include "timer.h"
+#include "display.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
-extern volatile uint8_t display_flag;
+extern volatile uint8_t dsplay_dig = 1;
 ISR(TIMER2_COMPA_vect){
-	display_flag = 1;
+	
 }
 
 void pwm_timer1_init(void){
@@ -32,8 +33,8 @@ void pwm_set_duty_cycle_timer1(uint8_t percentage){
 
 void timer2_init(){
 	TCCR2A |= (1<<WGM21);
-	TCCR2B |= (1<<CS222); // Prescaler 64 - CS22
-	OCR2A = 14; // For ~ 500us should be changed to much longer                                                                                                 
-	TCNT2 = 1;
+	TCCR2B |= (1<<CS22); // Prescaler 64 - CS22
+	OCR2A = 124; // For ~ 500us                                                                                    
+	TCNT2 = 0;
 	TIMSK2 |= (1<<OCIE2A);	
 }

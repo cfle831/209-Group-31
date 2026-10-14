@@ -8,5 +8,6 @@
 
 void display_init();
 void display_number(uint16_t number);
+void update_display_value(uint16_t number)
 
 #endif
