@@ -27,7 +27,7 @@ void adc_init(void){
 	// Clock prescaler of 16
 	ADCSRA |= (1 << ADPS2);
 	ADCSRB = 0x00;
-	DDRC |= 0x3F; // For ADC pins as input
+	DDRC &= ~(0x3F); // For ADC pins as input
 }
 
 uint16_t adc_read(uint8_t chan){
