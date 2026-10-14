@@ -15,7 +15,7 @@ R11 (100k) - 100.0k
 R12 (15k) - 15.11k
 R14 (22k) - 21.93k
 R16 (56k) - 55.44k
-R19 (22) - 22.3
+R19 (22) - 22.16
 
 EE209 Capacitor values used
 C11 (100nF) - 101.4nF
@@ -52,3 +52,11 @@ Turns out R13 had the wrong value. Downgrading it from 100k ohm to 15k ohm enabl
 The Schmmit trigger has a certain gain, given the previous resistance of R13 was 100k, despite the ratio was
 meant to be ~1:39(ratio between R13 and R18). We actually calculated this before but was hallucinating on the day
 when we made the schematici on Altium Designer.
+
+
+
+Brave attempt:
+3rd new resistor at the bottom layer at R19
+R19_3(56) - 56.12
+
+New R13(15k) - 15.08k
