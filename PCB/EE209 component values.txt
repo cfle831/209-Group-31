@@ -20,6 +20,7 @@ R19 (22) - 22.16
 EE209 Capacitor values used
 C11 (100nF) - 101.4nF
 C1 (10uF) - 8.9uF
+C8 (15nF) - 14.9nF
 C13 (100nF) - 100.7nF
 
 

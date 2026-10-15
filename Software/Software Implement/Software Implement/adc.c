@@ -11,14 +11,13 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdbool.h>
-#include <math.h>
-#include <float.h>
 
 #define estimated_sample_time 0.000104f // Accurate for prescaler 16
 #define samples_to_take 40 //  Possibly should be changed 
 
 /* in order to acheive a *maximum* sampling frequency of 10kHz, samples must be taken ~100us apart */
 /* Sampling frequency must not be a multiple of 500Hz*/
+
 
 void adc_init(void){
 	// Enable ADC converter
@@ -27,7 +26,35 @@ void adc_init(void){
 	// Clock prescaler of 16
 	ADCSRA |= (1 << ADPS2);
 	ADCSRB = 0x00;
-	DDRC &= ~(0x3F); // For ADC pins as input
+	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
+	DDRD |= (1<<PIND2); // Zero Crossing Detection pin
+}
+
+// backstep through gain stages of the circuit to find initial value
+uint16_t find_load_voltage(){
+	/* Gain values in direction towards measurement pins:
+	* 1st order filter: 0.817
+	* Vmeas Opamp: hopefully 1
+	* Input voltage divider: 0.04511
+	*/
+	
+	
+	/* Steps
+	* Get value at adc pin in mv
+	* remove 2.1 offset (sqrt(rms^2 - 2.1^2)
+	* divide by filter gain, then opamp gain, then voltage divider gain
+	* return
+	*/
+	return 0;
+}
+
+uint16_t find_load_current(){
+	/* Gain values in direction towards measurement pins:
+	* 1st order filter: 0.817
+	* Imeas Opamp:  
+	* Input voltage divider:
+	*/
+	return 0;
 }
 
 uint16_t adc_read(uint8_t chan){
@@ -54,7 +81,7 @@ uint16_t adc_convert_mv(uint16_t adc_count){
 
 // Approximates a step between index and the next value (either forwards or backwards)
 // Used to better align the current and voltage data sets
-uint16_t approximate_step(bool d_backwards, uint16_t values[], uint8_t index){
+uint16_t approximate_step(bool d_backwards, const uint16_t values[], uint8_t index){
 	uint16_t return_value;
 	if (d_backwards){
 		return_value = ((uint32_t)values[index] + values[index - 1])/2;	
@@ -64,7 +91,7 @@ uint16_t approximate_step(bool d_backwards, uint16_t values[], uint8_t index){
 	return return_value;
 }
 
-uint32_t calculate_power(uint16_t voltage[], uint16_t current[], uint8_t samples){
+uint32_t calculate_power(const uint16_t voltage[], const uint16_t current[], uint8_t samples){
 	uint64_t total_sum_IV = 0.0f;
 	for (uint8_t i=0; i<samples; i++){
 	total_sum_IV += (uint32_t)(voltage[i]*approximate_step(true, current, i));
@@ -73,18 +100,42 @@ uint32_t calculate_power(uint16_t voltage[], uint16_t current[], uint8_t samples
 	return power;
 }
 
-float calculate_RMS(uint16_t values[], uint8_t samples){
-	float total_sum = 0.0f;
-	for (uint8_t i=0; i<samples; i++){
-		total_sum += (uint32_t)values[i]*values[i];
+uint32_t square_root(uint32_t n)
+{
+	uint32_t result = 0;
+	uint32_t bit = 1UL << 30;
+
+	// Start with the highest power of four <= n
+	while (bit > n)
+	bit >>= 2;
+	while (bit != 0) {
+		if (n >= result + bit) {
+			n -= result + bit;
+			result = (result >> 1) + bit;
+			} else {
+			result >>= 1;
+		}
+		bit >>= 2;
 	}
-	
-	float integration_time = (float)samples;
-	
-	return (float)(sqrtf(total_sum/integration_time));
+
+	return result;
 }
 
-uint16_t calculate_peak(uint16_t values[], uint8_t samples){
+
+uint16_t calculate_RMS(const uint16_t values[], uint8_t samples)
+{
+	uint64_t total_sum = 0;
+
+	for (uint8_t i = 0; i < samples; i++) {
+		total_sum += (uint32_t)values[i] * values[i];
+	}
+
+	uint32_t mean_square = total_sum/samples;
+
+	return (uint16_t)square_root(mean_square);
+}
+
+uint16_t calculate_peak(const uint16_t values[], uint8_t samples){
 	// Just takes the largest value within the sample set
 	// Possible improvement could instead use if value[i-1] < value[i] < value[i+1] & and averaging these peak values.
 	uint16_t peak_value = 0;

@@ -4,8 +4,13 @@
  * Created: 1/10/2026 3:21:14 pm
  * Author : ferre
  */ 
+
 #define F_CPU 2000000UL
-#define SAMPLES_TO_TAKE 40 
+#define SAMPLES_TO_TAKE 253
+#define VOLTAGE_MEAS_PIN 0
+#define CURRENT_MEAS_PIN 1
+#define V_OFFSET_MEAS_PIN 2
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -14,15 +19,17 @@
 #include "timer.h"
 #include "display.h"
 
-volatile uint8_t display_flag = 0;
+
+
 volatile uint8_t adc_samples_full = 0;
 int main(void)
 {
-	_delay_ms(2000);
-	volatile uint16_t display = 1024;
+	_delay_ms(1000);
+	volatile uint16_t display_value = 1024;
 	usart_init(12);
 	//transmit_text("start", 5); //
 	//transmit_new_line();		//
+	//pwm_timer1_init();
 	timer2_init();
 	display_init();
 	adc_init();
@@ -34,18 +41,15 @@ int main(void)
 	// Replace with your application code
 	adc_read(0); // dummy conversion to settle values
 	
+	
+	
+	change_display_value(display_value);
     while (1) 
     {
-		//transmit_text("ab", 2);
-		//transmit_new_line();
 		
 		/* LED display */
 		
-		//_delay_ms(8);
-		if (display_flag){
-			display_number(display);
-			display_flag = 0;
-		}
+		
 		
 		/* ADC */
 		
@@ -57,18 +61,9 @@ int main(void)
 				adc_samples_full = 1;
 				index = 0;
 			}
-		}else{
-			if (index < SAMPLES_TO_TAKE){
-				
-				transmit_string(decimal_to_char(voltage[index]));
-				transmit_new_line();
-				index++;
-			} else{ // TESTING
-				transmit_text("----", 4);
-				transmit_new_line();
-				transmit_string(decimal_to_char(calculate_RMS(voltage, SAMPLES_TO_TAKE)));
-				break;
-			}
+		} else{
+			change_display_value(calculate_RMS(voltage, SAMPLES_TO_TAKE)); // display rms of voltage at pin 
+			adc_samples_full = 0;
 		}
 		
 	

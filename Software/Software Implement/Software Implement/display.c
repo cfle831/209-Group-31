@@ -60,15 +60,13 @@ void disable_seg(uint8_t dig){
 	PORTD |= (dig_pins[dig - 1]);
 }
 
-void display_init(){ // TODO
-	/*DDRC |= 0x38;
-	DDRD |= 0xF0;
-	*/
+void display_init(){ 
+	DDRC |= (7<<PINC3); // The SH outputs to display
+	DDRD |= (15<<PIND4); // DS outputs 
 }
 
 void change_display_value(uint16_t number){
 	cur_display_value = number;
-	
 }
 
 // Turns on each 7 seg sequentially, one per call

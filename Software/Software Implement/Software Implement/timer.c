@@ -4,6 +4,7 @@
 #include "display.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
+
 volatile uint16_t test = 0;
 ISR(TIMER2_COMPA_vect){
 	update_display();
