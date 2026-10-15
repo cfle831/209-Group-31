@@ -18,9 +18,12 @@
 volatile uint8_t dig_pins[4] = {(1<<PIND4), (1<<PIND5), (1<<PIND6), (1<<PIND7)};
 volatile uint8_t segment_0_to_9[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x67};
 volatile uint16_t cur_display_value = 0;
-void send_next_char(uint8_t value){
+void send_next_char(uint8_t value, uint8_t decimal_point){
 	PORTC = 0;
 	value = segment_0_to_9[value];
+	if (decimal_point){
+		value |= (1<<7);
+	}
 	for (int8_t i = 7; i>=0; i--){
 		PORTC |= (((value & (1 << i)) >> i) << SH_DS);
 		PINC |= (1<<SH_CP);
@@ -31,27 +34,27 @@ void send_next_char(uint8_t value){
 	PINC |= (1<<SH_ST);
 }
 
-void set_seg(uint8_t value, uint8_t dig){
+void set_seg(uint8_t value, uint8_t dig, uint8_t decimal_point){
 	// Disable All digits
 	PORTD = 0xFF;
-	send_next_char(value);
+	send_next_char(value, decimal_point);
 	PORTD &= ~(dig_pins[dig - 1]);	
 }
 
 void set_seg_all_digits(uint8_t value){
 	// Enable All Digits
 	PORTD = 0;
-	send_next_char(value);
+	send_next_char(value, 0);
 }
 
 void display_number(uint16_t number){ // Takes ~2ms per call
-	set_seg((number/1000) % 10,1);
+	set_seg((number/1000) % 10,1, 1);
 	_delay_us(500);
-	set_seg((number/100) % 10,2);
+	set_seg((number/100) % 10,2, 0);
 	_delay_us(500);
-	set_seg((number/10) % 10,3);
+	set_seg((number/10) % 10, 3, 0);
 	_delay_us(500);
-	set_seg(number % 10,4);
+	set_seg(number % 10, 4, 0);
 	_delay_us(500);
 	disable_seg(4);
 }
@@ -73,16 +76,16 @@ void change_display_value(uint16_t number){
 void update_display(){  // POSSIBLE IMPROVEMENT store the differnet values / 10, 1000 etc in different variables so as little maths as possible is occuring 
 	static volatile uint8_t cur_dig = 1;
 	if (cur_dig == 1){
-		set_seg((cur_display_value/1000) % 10,1);
+		set_seg((cur_display_value/1000) % 10, 1, 1);
 		cur_dig++;
 	} else if (cur_dig == 2){
-		set_seg((cur_display_value/100) % 10,2);
+		set_seg((cur_display_value/100) % 10, 2, 0);
 		cur_dig++;
 	} else if (cur_dig == 3) {
-		set_seg((cur_display_value/10) % 10,3);
+		set_seg((cur_display_value/10) % 10, 3, 0);
 		cur_dig++;
 	}else {
-		set_seg(cur_display_value % 10,4);
+		set_seg(cur_display_value % 10, 4, 0);
 		cur_dig = 1;
 	}
 }

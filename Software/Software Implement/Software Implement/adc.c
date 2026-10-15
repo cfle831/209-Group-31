@@ -34,7 +34,7 @@ void adc_init(void){
 uint16_t find_load_voltage(){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
-	* Vmeas Opamp: hopefully 1
+	* Vmeas Opamp: 1
 	* Input voltage divider: 0.04511
 	*/
 	
@@ -48,13 +48,17 @@ uint16_t find_load_voltage(){
 	return 0;
 }
 
-uint16_t find_load_current(){
+uint16_t find_load_current_from_adc(uint16_t adc_measurement){ // TODO consider negatives, and that integers cant be smaller than 1
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
-	* Imeas Opamp:  
-	* Input voltage divider:
+	* Imeas Opamp:  2.47177
+	* Offset: 2.053 V --> 420
+	* Input voltage divider: V= I * Rshunt so I = V / 0.5021
 	*/
-	return 0;
+	int32_t adc_value = adc_measurement;
+	adc_value -= 420;
+	adc_value *= (5/1024);
+	return (adc_measurement / (0.817*2.47177*0.5021)); // may be cut off due to value < 0 as an integer, better to multiply rather than divide
 }
 
 uint16_t adc_read(uint8_t chan){

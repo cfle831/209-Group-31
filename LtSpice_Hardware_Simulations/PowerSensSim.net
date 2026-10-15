@@ -30,7 +30,7 @@ R2 Vvd 0 33k
 R1 5V Vvd 47k
 C1 Vvd 0 10µ
 Rf1 Vfv Vvo 15k
-Cf1 0 Vfv 15nF
+Cf1 0 Vfv 1nF
 X§U2 N010 N008 5V 0 Vio LM324 ;§pnba In+)In-)V+)V-)OUT
 X§U4 N011 N006 5V 0 Vft2 LM324 ;§pnba In+)In-)V+)V-)OUT
 R5 N011 0 100k
