@@ -40,7 +40,7 @@ void set_duty_cycle(uint8_t percentage){
 
 
 
-void timer0_init(void){
+void timer2_init(void){
 	TCCR2A |= (1<<WGM21);
 	TCCR2B |= (1<<CS22); // Prescaler 64 - CS22
 	OCR2A = 124; // For ~ 500us                                                                                    

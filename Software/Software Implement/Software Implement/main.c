@@ -61,7 +61,7 @@ int main(void)
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				load_current[i] = find_load_current(current[i]);
 			}
-			calculate_RMS();
+			//calculate_RMS();
 			
 		}
     }

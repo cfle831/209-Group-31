@@ -20,6 +20,6 @@ void set_duty_cycle(uint8_t percentage);
 void timer2_init();
 
 // timer for adc
-void timer1_init();
+void timer0_init();
 
 #endif
