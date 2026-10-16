@@ -17,5 +17,11 @@ uint16_t adc_convert_mv(uint16_t adc_count);
 uint32_t calculate_power(const uint16_t voltage[], const uint16_t current[], uint8_t samples);
 // Calculate the RMS Value of a signal 
 uint16_t calculate_RMS(const uint16_t values[], uint8_t samples);
+// Removes gain's and offsets to find the input signal's values
+int32_t find_load_voltage(uint16_t adc_measurement);
+
+int32_t find_load_current(uint16_t adc_measurement);
+
+uint32_t square_root(uint32_t n);
 
 #endif
