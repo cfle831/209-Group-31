@@ -21,7 +21,6 @@
 
 
 
-volatile uint8_t adc_samples_full = 0;
 int main(void)
 {
 	_delay_ms(1000);
@@ -29,47 +28,23 @@ int main(void)
 	usart_init(12);
 	//transmit_text("start", 5); //
 	//transmit_new_line();		//
-	pwm_timer1_init();
+	//pwm_init();
 	timer2_init();
 	display_init();
 	adc_init();
 	sei();
 	
-	uint16_t voltage[SAMPLES_TO_TAKE];
-	uint16_t current[SAMPLES_TO_TAKE];
-	uint8_t index = 0;
 	// Replace with your application code
 	adc_read(0); // dummy conversion to settle values
 	
 	// The PWM signal is inverted at the shift register
-	set_duty_cycle(75); 
+	//set_duty_cycle(75); 
 	
 	
 	
 	change_display_value(display_value);
     while (1) 
     {
-		
-		/* LED display */
-		
-		
-		
-		/* ADC */
-		
-		if (!adc_samples_full){
-			voltage[index] = adc_convert_mv(adc_read(0));
-			current[index] = adc_convert_mv(adc_read(1));
-			index++;
-			if (index == SAMPLES_TO_TAKE){
-				adc_samples_full = 1;
-				index = 0;
-			}
-		} else{
-			change_display_value(calculate_RMS(voltage, SAMPLES_TO_TAKE)); // display rms of voltage at pin 
-			adc_samples_full = 0;
-		}
-		
-	
 		
     }
 }

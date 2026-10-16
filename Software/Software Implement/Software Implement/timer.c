@@ -5,13 +5,21 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
+#define SAMPLES_TO_TAKE 253
+
 volatile uint16_t test = 0;
+volatile uint8_t voltage_read = 1;
+volatile uint8_t adc_samples_full = 0;
+volatile uint16_t voltage[SAMPLES_TO_TAKE];
+volatile uint16_t current[SAMPLES_TO_TAKE];
+volatile uint8_t index = 0;
+
 ISR(TIMER2_COMPA_vect){
 	update_display();
 	test++;
 }
 
-void pwm_timer1_init(void){
+void pwm_init(void){
 	
 	DDRB |= (1 << PINB2); // OE pin as output
 	
@@ -33,10 +41,38 @@ void set_duty_cycle(uint8_t percentage){
 
 
 
-void timer2_init(){
+void timer2_init(void){
 	TCCR2A |= (1<<WGM21);
 	TCCR2B |= (1<<CS22); // Prescaler 64 - CS22
 	OCR2A = 124; // For ~ 500us                                                                                    
 	TCNT2 = 0;
 	TIMSK2 |= (1<<OCIE2A);	
+}
+
+void timer1_init(void){
+	TCCR1B |= (1<<WGM12) | (1<<CS10); // No prescaler and set CTC
+	
+	SIXTEEN_BIT_REG_SET(OCR1AH, OCR1AL, 199); // Set compare every 100us, 10khz
+	SIXTEEN_BIT_REG_SET(TCNT1H, TCNT1L, 0); // reset timer/counter1
+	TIMSK1 |= (1<<OCIE1A); //enable compare interrupt
+}
+
+ISR(TIMER1_COMPA_vect) {
+	// sample adc
+	// alternate between voltage and current adc
+	if (!adc_samples_full){
+		if (voltage_read){
+			voltage[index] = adc_read(0);
+			voltage_read = 0;
+		} else{
+			current[index] = adc_read(1);
+			voltage_read = 1;
+			index++;
+			if (index == SAMPLES_TO_TAKE){
+				index = 0;
+				adc_samples_full = 1;
+			}
+		}
+	}
+	
 }
