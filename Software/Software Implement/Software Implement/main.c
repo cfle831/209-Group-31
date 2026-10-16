@@ -23,7 +23,7 @@ extern volatile uint8_t adc_samples_full; // From timer.c
 extern volatile uint16_t voltage[SAMPLES_TO_TAKE];
 extern volatile uint16_t current[SAMPLES_TO_TAKE];
 volatile int32_t input_voltage[SAMPLES_TO_TAKE];
-voltaile int32_t load_current[SAMPLES_TO_TAKE];
+volatile int32_t load_current[SAMPLES_TO_TAKE];
 int main(void)
 {
 	_delay_ms(1000);
@@ -31,7 +31,7 @@ int main(void)
 	usart_init(12);
 	//transmit_text("start", 5); //
 	//transmit_new_line();		//
-	//pwm_init();
+	pwm_init();
 	timer2_init();
 	display_init();
 	adc_init();
@@ -41,7 +41,7 @@ int main(void)
 	adc_read(0); // dummy conversion to settle values
 	
 	// The PWM signal is inverted at the shift register
-	//set_duty_cycle(75); 
+	set_duty_cycle(75); 
 	
 	
 	
@@ -58,10 +58,10 @@ int main(void)
 			// Approximate half a step back for current values to prevent percieved phase shift
 			
 			// Using current samples get load current
-			for (i = 0; i<SAMPLES_TO_TAKE; i++){
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				load_current[i] = find_load_current(current[i]);
 			}
-			calculate_RMS()
+			calculate_RMS();
 			
 		}
     }

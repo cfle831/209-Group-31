@@ -40,7 +40,7 @@ void set_duty_cycle(uint8_t percentage){
 
 
 
-void timer2_init(void){
+void timer0_init(void){
 	TCCR2A |= (1<<WGM21);
 	TCCR2B |= (1<<CS22); // Prescaler 64 - CS22
 	OCR2A = 124; // For ~ 500us                                                                                    
@@ -48,15 +48,15 @@ void timer2_init(void){
 	TIMSK2 |= (1<<OCIE2A);	
 }
 
-void timer1_init(void){
-	TCCR1B |= (1<<WGM12) | (1<<CS10); // No prescaler and set CTC
+void timer0_init(void){
+	TCCR0B |= (1<<WGM01) | (1<<CS00); // No prescaler and set CTC
 	
-	SIXTEEN_BIT_REG_SET(OCR1AH, OCR1AL, 199); // Set compare every 100us, 10khz
-	SIXTEEN_BIT_REG_SET(TCNT1H, TCNT1L, 0); // reset timer/counter1
-	TIMSK1 |= (1<<OCIE1A); //enable compare interrupt
+	OCR0A = 199; // Set compare every 100us, 10khz
+	TCNT0 = 0; // reset timer/counter1
+	TIMSK0 |= (1<<OCIE0A); //enable compare interrupt
 }
 
-ISR(TIMER1_COMPA_vect) {
+ISR(TIMER0_COMPA_vect) {
 	// sample adc
 	// alternate between voltage and current adc
 	if (!adc_samples_full){

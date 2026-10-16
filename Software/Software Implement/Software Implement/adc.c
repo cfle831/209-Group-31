@@ -101,8 +101,9 @@ uint16_t approximate_step_back_all(const uint16_t values[], uint8_t samples){
 
 uint32_t calculate_power(const uint16_t voltage[], const uint16_t current[], uint8_t samples){
 	uint64_t total_sum_IV = 0.0f;
+	
 	for (uint8_t i=0; i<samples; i++){
-	total_sum_IV += (uint32_t)(voltage[i]*approximate_step(true, current, i));
+		total_sum_IV += (uint32_t)(voltage[i]*approximate_step(1, current, i));
 	}
 	uint32_t power = total_sum_IV/samples;
 	return power;
