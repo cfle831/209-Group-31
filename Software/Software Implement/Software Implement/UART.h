@@ -9,7 +9,8 @@
 #define BAUD 9600
  
 void usart_init(uint16_t ubrr);
-char* decimal_to_char(uint16_t value);
+// Can handle up to 9 digits
+char* decimal_to_char(int32_t value);
 void usart_transmit(uint8_t data);
 void transmit_new_line();
 void transmit_string(char text[]);

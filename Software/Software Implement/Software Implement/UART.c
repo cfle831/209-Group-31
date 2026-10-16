@@ -3,6 +3,7 @@
 #include <util/delay.h>
 #include "UART.h"
 #include <string.h>
+#include <stdlib.h>
 void usart_init(uint16_t ubrr){
 	
 	// Operating Mode - Async
@@ -25,46 +26,37 @@ void usart_init(uint16_t ubrr){
 	
 }
 
-char string_10_dig[11] = {};
+char string_9_dig[11] = {};
 // Converts a decimal number to a string (char array with terminating null character).
-// Input can handle up to 10 Digits. 
-char* decimal_to_char(uint16_t value){
-	uint32_t divisor = 1000000000;
-	// Clear string_10_dig
-	memset(string_10_dig, 0, 11);
-	string_10_dig[10] = '\0';
-	// Convert digits to characters
-	for (uint8_t index = 0; index<10; index++){
-		string_10_dig[index] = (char)(((value / divisor) % 10)+48);
-		divisor /= 10;
-	}
-	
-	// Trim Leading zeros
-	// Does not trim if there are no non-zero values
-	uint8_t first_dig_index = 0;
-	for (uint8_t index = 0; index<10; index++){
-		if (string_10_dig[index] != '0'){
-			first_dig_index = index;
-			break;
-		}
-	}
-	// Rearrange to trim
-	if (first_dig_index){
-		for (uint8_t index = 0; index<11; index++){
-			if ((index + first_dig_index) >=10){
-				string_10_dig[index] = '\0';
-				
-				break;
-			} else{
-				string_10_dig[index] = string_10_dig[index + first_dig_index];	
-			}
-		
-		}
-	}
-	
-	return string_10_dig;
+// Input can handle up to 9 Digits. 
+char* decimal_to_char(int32_t value)
+{
+    uint32_t magnitude;
+    uint8_t pos = 10;
+
+    string_9_dig[10] = '\0';
+
+    // Handle INT32_MIN without signed integer overflow
+    if (value < 0) {
+        magnitude = (uint32_t)(-(int64_t)value);
+    } else {
+        magnitude = (uint32_t)value;
+    }
+
+    do {
+        string_9_dig[--pos] = (char)('0' + magnitude % 10);
+        magnitude /= 10;
+    } while (magnitude > 0);
+
+    if (value < 0) {
+        string_9_dig[--pos] = '-';
+    }
+
+    // Shift the result to the start of the buffer
+    memmove(string_9_dig, &string_9_dig[pos], 11 - pos);
+
+    return string_9_dig;
 }
-	
 // Transmit a single character to UART
 void usart_transmit(uint8_t data){
 	 // Check if able to transmit / Safe to Load
@@ -83,6 +75,7 @@ void usart_transmit(uint8_t data){
 		 usart_transmit(text[i]);
 		 _delay_ms(5);
 	 }
+	 
  }
  /* Transmits a char array to the UART. Requires the length of the string 
  */
