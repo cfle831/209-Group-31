@@ -48,7 +48,7 @@ uint16_t find_load_voltage(){
 	return 0;
 }
 
-uint16_t find_load_current_from_adc(uint16_t adc_measurement){ // TODO consider negatives, and that integers cant be smaller than 1
+uint16_t find_load_current_from_adc(int32_t adc_measurement){ // TODO consider negatives, and that integers cant be smaller than 1
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Imeas Opamp:  2.47177
