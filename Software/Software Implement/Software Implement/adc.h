@@ -5,10 +5,19 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+
 #define  V_REF 5
+#define ESTIMATED_SAMPLE_TIME 0.000104f // Accurate for prescaler 16
+#define SAMPLES_TO_TAKE 40 //  Possibly should be changed
+
 
 // Initialise registers for adc 
 void adc_init(void);
+
+// Enable and disable the adc sampling
+void adc_sample_enable(void);
+void adc_sample_disable(void);
+
 // Read the adc value in a specified channel
 uint16_t adc_read(uint8_t chan);
 // Convert an adc reading to mV

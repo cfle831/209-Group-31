@@ -2,11 +2,10 @@
  * Software Implement.c
  *
  * Created: 1/10/2026 3:21:14 pm
- * Author : ferre
+ * Author : ferre, TFE
  */ 
 
 #define F_CPU 2000000UL
-#define SAMPLES_TO_TAKE 40
 #define VOLTAGE_MEAS_PIN 0
 #define CURRENT_MEAS_PIN 1
 #define V_OFFSET_MEAS_PIN 2
@@ -39,7 +38,7 @@ int main(void)
 	
 	// Replace with your application code
 	adc_read(0); // dummy conversion to settle values
-	
+	adc_sample_enable(); //
 	// The PWM signal is inverted at the shift register
 	set_duty_cycle(75); 
 	
@@ -64,7 +63,8 @@ int main(void)
 			// Calculate power
 			int64_t power_value = calculate_real_power(input_voltage, load_current, SAMPLES_TO_TAKE);
 			//TESTING
-			
+			// Enable ADC sampling
+			adc_sample_enable();
 		}
     }
 }

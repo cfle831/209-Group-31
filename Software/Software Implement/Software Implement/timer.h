@@ -17,6 +17,7 @@ void pwm_init();
 // Changes OCR1B based on the desire duty cycle
 void set_duty_cycle(uint8_t percentage);
 
+// timer for display
 void timer2_init();
 
 // timer for adc

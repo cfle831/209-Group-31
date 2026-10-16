@@ -2,21 +2,15 @@
 
 #include "timer.h"
 #include "display.h"
+#include "adc.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-#define SAMPLES_TO_TAKE 40
-
-volatile uint16_t test = 0;
 volatile uint8_t voltage_read = 1;
-volatile uint8_t adc_samples_full = 0;
+extern volatile uint8_t adc_samples_full;
 volatile uint16_t voltage[SAMPLES_TO_TAKE];
 volatile uint16_t current[SAMPLES_TO_TAKE];
 volatile uint8_t index = 0;
-
-ISR(TIMER2_COMPA_vect){
-	update_display();
-}
 
 void pwm_init(void){
 	
@@ -56,6 +50,8 @@ void timer0_init(void){
 	TIMSK0 |= (1<<OCIE0A); //enable compare interrupt
 }
 
+/////// ISR ///////
+
 ISR(TIMER0_COMPA_vect) {
 	// sample adc
 	// alternate between voltage and current adc
@@ -69,9 +65,13 @@ ISR(TIMER0_COMPA_vect) {
 			index++;
 			if (index == SAMPLES_TO_TAKE){
 				index = 0;
-				adc_samples_full = 1;
+				adc_sample_disable();
 			}
 		}
 	}
 	
+}
+
+ISR(TIMER2_COMPA_vect){
+	update_display();
 }

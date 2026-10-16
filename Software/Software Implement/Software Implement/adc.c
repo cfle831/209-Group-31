@@ -11,8 +11,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#define estimated_sample_time 0.000104f // Accurate for prescaler 16
-#define samples_to_take 40 //  Possibly should be changed 
+volatile uint8_t adc_samples_full; // From timer.c
 
 /* in order to acheive a *maximum* sampling frequency of 10kHz, samples must be taken ~100us apart */
 /* Sampling frequency must not be a multiple of 500Hz*/
@@ -28,6 +27,17 @@ void adc_init(void){
 	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
 	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
 }
+
+void adc_sample_enable(void){
+	adc_samples_full = 0;
+	TIMSK0 |= (1<<OCIE0A);
+}
+
+void adc_sample_disable(void){
+	adc_samples_full = 1;
+	TIMSK0 &= ~(1<<OCIE0A); // Disable interrupt
+}
+
 
 // backstep through gain stages of the circuit to find initial value
 int32_t find_load_voltage(uint16_t adc_measurement){
@@ -109,7 +119,7 @@ uint32_t calculate_power(const uint16_t voltage[], const uint16_t current[], uin
 	return power;
 }
 
-int64_t calculate_real_power(const int32_t input_voltage[], int32_t const load_current[], uint8_t samples){
+int64_t calculate_real_power(const int32_t input_voltage[], int32_t const load_current[], const uint8_t samples){
 	int64_t total_sum = 0;
 	for (uint8_t i = 0; i<samples; i++){
 		total_sum += ((int64_t)input_voltage[i] * load_current[i]) / 40;
@@ -163,34 +173,5 @@ uint16_t calculate_peak(const uint16_t values[], uint8_t samples){
 	return peak_value;
 	
 }
-/*
-int main(void)
-{
-	adc_init();
-	usart_init(((F_CPU/((uint32_t)16*BAUD)) - 1));
-	uint16_t voltage[samples_to_take];
-	uint16_t current[samples_to_take];
-	uint8_t index = 0;	
-    // Replace with your application code 
-	//adc_read(0); // dummy conversion to settle values
-    while (1) 
-    {
-		voltage[index] = adc_convert_mv(adc_read(0));
-		current[index] = adc_convert_mv(adc_read(1));
-		index++;
-		if (index == samples_to_take){
-			break;
-		}
-    }
-	transmit_text("Voltage, Current", 16);
-	transmit_new_line();
-	transmit_excel_two_columns(voltage, current, 40);
-	transmit_new_line();
-	transmit_new_line();
-	transmit_text("RMS V", 5);
-	transmit_new_line();
-	transmit_string(decimal_to_char(calculate_RMS(voltage, samples_to_take)));
-	
-}*/
 
 
