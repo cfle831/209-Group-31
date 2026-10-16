@@ -24,4 +24,6 @@ int32_t find_load_current(uint16_t adc_measurement);
 
 uint32_t square_root(uint32_t n);
 
+
+
 #endif

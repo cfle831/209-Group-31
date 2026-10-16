@@ -10,7 +10,6 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <stdbool.h>
 
 #define estimated_sample_time 0.000104f // Accurate for prescaler 16
 #define samples_to_take 40 //  Possibly should be changed 
@@ -35,7 +34,7 @@ int32_t find_load_voltage(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Vmeas Opamp: 1
-	* assume 2.1 V offset (not accurate)---> 430 adc counts
+	* 2.12 V offset accurate ---> TODO
 	* Input voltage divider: 0.04511
 	*/
 	
@@ -48,7 +47,7 @@ int32_t find_load_current(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Imeas Opamp:  2.47177
-	* Offset: 2.053 V --> 420
+	* Offset: 2.04 V --> TODO
 	* Input voltage divider: V= I * Rshunt so I = V / 0.5021
 	*/
 	int32_t adc_value = adc_measurement;
@@ -84,7 +83,7 @@ uint16_t adc_convert_mv(uint16_t adc_count){
 
 // Approximates a step between index and the next value (either forwards or backwards)
 // Used to better align the current and voltage data sets
-uint16_t approximate_step(bool d_backwards, const uint16_t values[], uint8_t index){
+uint16_t approximate_step(uint8_t d_backwards, const uint16_t values[], uint8_t index){
 	uint16_t return_value;
 	if (d_backwards){
 		return_value = ((uint32_t)values[index] + values[index - 1])/2;	
@@ -92,6 +91,12 @@ uint16_t approximate_step(bool d_backwards, const uint16_t values[], uint8_t ind
 		return_value = ((uint32_t)values[index] + values[index + 1])/2;
 	}
 	return return_value;
+}
+
+uint16_t approximate_step_back_all(const uint16_t values[], uint8_t samples){
+	for (uint8_t i = 0 ; i<samples; i++){
+		values[i] = ((uint32_t)values[i] + values[i-1] )/2;
+	}
 }
 
 uint32_t calculate_power(const uint16_t voltage[], const uint16_t current[], uint8_t samples){

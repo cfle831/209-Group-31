@@ -5,7 +5,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-#define SAMPLES_TO_TAKE 253
+#define SAMPLES_TO_TAKE 40
 
 volatile uint16_t test = 0;
 volatile uint8_t voltage_read = 1;
@@ -16,7 +16,6 @@ volatile uint8_t index = 0;
 
 ISR(TIMER2_COMPA_vect){
 	update_display();
-	test++;
 }
 
 void pwm_init(void){
