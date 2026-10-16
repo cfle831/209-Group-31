@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build AVR project",
+            "type": "shell",
+            "command": "/usr/bin/avr-gcc",
+            "args": [
+                "-g",
+                "-Os",
+                "-mmcu=atmega328p", 
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.elf"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}
+
+
+/*
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "echo",
+            "type": "shell",
+            "command": "echo Hello"
+        }
+    ]
+}
+    */

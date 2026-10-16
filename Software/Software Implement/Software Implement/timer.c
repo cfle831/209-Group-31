@@ -13,21 +13,21 @@ ISR(TIMER2_COMPA_vect){
 
 void pwm_timer1_init(void){
 	
-	DDRB |= (1 << DDB2); // OE pin as output
+	DDRB |= (1 << PINB2); // OE pin as output
 	
 	TCCR1A |= (1<<COM1B1) | (1<<WGM11); // Fast PWM, Clear pin on compare match
 	TCCR1B |= (1<<WGM13) | (1<<WGM12) | (1<<CS10); // Fast pwm, no prescaler
-	// set TOP to 19999, for a PWM frequency of 100hz
-	SIXTEEN_BIT_REG_SET(ICR1H, ICR1L, 19999);
-	// set Output Compare Register to 10000 for duty cycle of 50%
-	SIXTEEN_BIT_REG_SET(OCR1BH, OCR1BL, 10000);
+	// set TOP to 3999, for a PWM frequency of 500hz
+	SIXTEEN_BIT_REG_SET(ICR1H, ICR1L, 3999);
+	// set Output Compare Register to 2000 for duty cycle of 50%
+	SIXTEEN_BIT_REG_SET(OCR1BH, OCR1BL, 2000);
 }
 
-void pwm_set_duty_cycle_timer1(uint8_t percentage){
-	if ((percentage > 100) || (percentage < 0)) {
+void set_duty_cycle(uint8_t percentage){
+	if (percentage > 100) {
 		return;
 	}
-	uint16_t OC1B = 200*percentage;
+	uint16_t OC1B = 40*percentage;
 	SIXTEEN_BIT_REG_SET(OCR1BH, OCR1BL, OC1B);
 }
 

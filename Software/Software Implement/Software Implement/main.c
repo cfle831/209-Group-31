@@ -29,7 +29,7 @@ int main(void)
 	usart_init(12);
 	//transmit_text("start", 5); //
 	//transmit_new_line();		//
-	//pwm_timer1_init();
+	pwm_timer1_init();
 	timer2_init();
 	display_init();
 	adc_init();
@@ -40,6 +40,7 @@ int main(void)
 	uint8_t index = 0;
 	// Replace with your application code
 	adc_read(0); // dummy conversion to settle values
+	set_duty_cycle(50);
 	
 	
 	
