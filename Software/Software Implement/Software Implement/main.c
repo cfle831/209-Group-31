@@ -55,13 +55,15 @@ int main(void)
 				input_voltage[i] = find_load_voltage(voltage[i]);
 			}
 			
-			// Approximate half a step back for current values to prevent percieved phase shift
-			
+			// Approximate half a step back for current values to prevent perceived phase shift
+			approximate_step_back_all(current, SAMPLES_TO_TAKE);
 			// Using current samples get load current
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				load_current[i] = find_load_current(current[i]);
 			}
-			//calculate_RMS();
+			// Calculate power
+			int64_t power_value = calculate_real_power(input_voltage, load_current, SAMPLES_TO_TAKE);
+			//TESTING
 			
 		}
     }

@@ -23,7 +23,9 @@ int32_t find_load_voltage(uint16_t adc_measurement);
 int32_t find_load_current(uint16_t adc_measurement);
 
 uint32_t square_root(uint32_t n);
+// Approximates half a step back to reduce percieved phase shift
+void approximate_step_back_all(uint16_t values[], uint8_t samples);
 
-
+int64_t calculate_real_power(const int32_t input_voltage[], int32_t const load_current[], uint8_t samples);
 
 #endif

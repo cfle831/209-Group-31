@@ -92,10 +92,10 @@ uint16_t approximate_step(uint8_t d_backwards, const uint16_t values[], uint8_t 
 	}
 	return return_value;
 }
-
-uint16_t approximate_step_back_all(uint16_t values[], uint8_t samples){
-	for (uint8_t i = 0 ; i<samples; i++){
-		values[i] = (values[i] + values[i-1])>>1;
+// Edits the input array
+void approximate_step_back_all(uint16_t values[], uint8_t samples){
+	for (uint8_t i = 1 ; i<samples; i++){
+		values[i] = ((values[i] + values[i-1])>>1);
 	}
 }
 
@@ -109,6 +109,13 @@ uint32_t calculate_power(const uint16_t voltage[], const uint16_t current[], uin
 	return power;
 }
 
+int64_t calculate_real_power(const int32_t input_voltage[], int32_t const load_current[], uint8_t samples){
+	int64_t total_sum = 0;
+	for (uint8_t i = 0; i<samples; i++){
+		total_sum += ((int64_t)input_voltage[i] * load_current[i]) / 40;
+	}
+	return total_sum;
+}
 uint32_t square_root(uint32_t n)
 {
 	uint32_t result = 0;
