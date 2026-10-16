@@ -39,20 +39,12 @@ int32_t find_load_voltage(uint16_t adc_measurement){
 	* Input voltage divider: 0.04511
 	*/
 	
-	
-	/* Steps
-	* Get value at adc pin in mv
-	* divide by filter gain
-	* remove 2.1 offset -- > 430
-	* opamp gain, then voltage divider gain
-	* return
-	*/
 	int32_t return_value = (adc_measurement-430)/0.817; // Finding exact offset voltage is very important for accuracy
 	return_value *= 22; //   (0.04511)^-1
 	return return_value;
 }
 
-int32_t find_load_current(uint16_t adc_measurement){ // TODO consider negatives, and that integers cant be smaller than 1
+int32_t find_load_current(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Imeas Opamp:  2.47177
@@ -61,8 +53,11 @@ int32_t find_load_current(uint16_t adc_measurement){ // TODO consider negatives,
 	*/
 	int32_t adc_value = adc_measurement;
 	adc_value -= 420;
-	adc_value *= (5/1024); // Value in volts
-	return (adc_measurement / (2.47177*0.5021)); // may be cut off due to value < 0 as an integer, better to multiply rather than divide
+	
+	adc_value *= 5000; // to get pure ac value in mV
+	adc_value /= 1024;
+	adc_value /= (2.47177*0.817*0.5021);
+	return (adc_value);
 }
 
 uint16_t adc_read(uint8_t chan){
