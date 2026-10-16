@@ -27,7 +27,7 @@ void adc_init(void){
 	ADCSRA |= (1 << ADPS2);
 	ADCSRB = 0x00;
 	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
-	DDRD |= (1<<PIND2); // Zero Crossing Detection pin
+	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
 }
 
 // backstep through gain stages of the circuit to find initial value
