@@ -40,7 +40,9 @@ int main(void)
 	uint8_t index = 0;
 	// Replace with your application code
 	adc_read(0); // dummy conversion to settle values
-	set_duty_cycle(50);
+	
+	// The PWM signal is inverted at the shift register
+	set_duty_cycle(75); 
 	
 	
 	
