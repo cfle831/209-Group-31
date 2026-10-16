@@ -31,24 +31,28 @@ void adc_init(void){
 }
 
 // backstep through gain stages of the circuit to find initial value
-uint16_t find_load_voltage(){
+int32_t find_load_voltage(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Vmeas Opamp: 1
+	* assume 2.1 V offset (not accurate)---> 430 adc counts
 	* Input voltage divider: 0.04511
 	*/
 	
 	
 	/* Steps
 	* Get value at adc pin in mv
-	* remove 2.1 offset (sqrt(rms^2 - 2.1^2)
-	* divide by filter gain, then opamp gain, then voltage divider gain
+	* divide by filter gain
+	* remove 2.1 offset -- > 430
+	* opamp gain, then voltage divider gain
 	* return
 	*/
-	return 0;
+	int32_t return_value = (adc_measurement-430)/0.817; // Finding exact offset voltage is very important for accuracy
+	return_value *= 22; //   (0.04511)^-1
+	return return_value;
 }
 
-uint16_t find_load_current_from_adc(int32_t adc_measurement){ // TODO consider negatives, and that integers cant be smaller than 1
+int32_t find_load_current(uint16_t adc_measurement){ // TODO consider negatives, and that integers cant be smaller than 1
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Imeas Opamp:  2.47177
@@ -57,8 +61,8 @@ uint16_t find_load_current_from_adc(int32_t adc_measurement){ // TODO consider n
 	*/
 	int32_t adc_value = adc_measurement;
 	adc_value -= 420;
-	adc_value *= (5/1024);
-	return (adc_measurement / (0.817*2.47177*0.5021)); // may be cut off due to value < 0 as an integer, better to multiply rather than divide
+	adc_value *= (5/1024); // Value in volts
+	return (adc_measurement / (2.47177*0.5021)); // may be cut off due to value < 0 as an integer, better to multiply rather than divide
 }
 
 uint16_t adc_read(uint8_t chan){
