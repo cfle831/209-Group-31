@@ -22,8 +22,8 @@ volatile uint8_t idx = 0;
 /* Sampling frequency must not be a multiple of 500Hz*/
 
 void zero_crossing_init(void){
-	EICRA |= (3 << ISC00);
-	EIMSK |= (1 << INT0);
+	EICRA |= (3 << ISC00); // INT0 interrupt on rising edge
+	EIMSK |= (1 << INT0); // enable INT0 interrupts
 }
 
 void adc_init(void){
@@ -167,9 +167,11 @@ uint16_t calculate_peak(const uint16_t values[], uint8_t samples){
 
 /////// ISR ///////
 
-ISR(ADC_vect) {
+ISR(ADC_vect) { // ADC conversion complete interrupt
 	// sample adc
 	// alternate between voltage and current adc
+	
+	// Store values from most recent conversion
 	uint8_t value_low = ADCL;
 	uint8_t value_high = ADCH;
 	
@@ -178,15 +180,18 @@ ISR(ADC_vect) {
 			// Log the voltage adc sample in array
 			voltage[idx] = (((uint16_t)value_high << 8) | value_low);
 			
-			// Switch to current channel
-			ADMUX = 0xF0;
+			// Switch to the current sense channel
+			ADMUX &= (0xF0); // Lower MUX bits
 			ADMUX |= (1 << CURRENT_ADC);
 			voltage_read = 0;
 			
-			} else {
+		} else {
+			// Store current adc sample in array
 			current[idx] = (((uint16_t)value_high << 8) | value_low);
-			ADMUX = 0xF0;
-			ADMUX |= (1 << VOLTAGE_ADC);
+			
+			// Switch to voltage sense channel
+			ADMUX &= (0xF0); // Lower MUX bits
+			ADMUX |= (1 << VOLTAGE_ADC); 
 			voltage_read = 1;
 			
 			// increment array index
@@ -194,6 +199,7 @@ ISR(ADC_vect) {
 			if (idx == SAMPLES_TO_TAKE){
 				idx = 0;
 				adc_sample_disable();
+				
 			}
 		}
 		ADC = 0;
@@ -202,5 +208,5 @@ ISR(ADC_vect) {
 
 ISR(INT0_vect){
 	adc_sample_enable();
-	EIMSK &= ~(1 << INT0);
+	EIMSK &= ~(1 << INT0); // Disable (this) INT0 interrupt
 }

@@ -29,11 +29,13 @@ int main(void)
 	_delay_ms(1000);
 	volatile uint16_t display_value = 1024;
 	usart_init(12);
+	
 	transmit_text("start", 5); //
 	transmit_new_line();		//
-	pwm_init();
+	
+	pwm_init(); // in timer.c
 	timer2_init(); // For display updating
-	zero_crossing_init();
+	zero_crossing_init(); // in adc.c
 	display_init();
 	adc_init();
 	sei();
@@ -76,7 +78,7 @@ int main(void)
 			EIMSK |= (1 << INT0);
 		}
 		else {
-			ADCSRA |= (1 << ADSC);
+			ADCSRA |= (1 << ADSC); // Start a conversion --> WRONG
 		}
     }
 }
