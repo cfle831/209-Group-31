@@ -10,6 +10,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <float.h>
 
 extern volatile uint8_t adc_samples_full; // From timer.c
 
@@ -48,7 +49,7 @@ int32_t find_load_voltage(uint16_t adc_measurement){
 	* Input voltage divider: 0.04511
 	*/
 	
-	int32_t return_value = (adc_measurement-430)/0.817; // Finding exact offset voltage is very important for accuracy
+	int32_t return_value = ((int32_t)adc_measurement-430)/0.817; // Finding exact offset voltage is very important for accuracy
 	return_value *= 22; //   (0.04511)^-1
 	return return_value;
 }
@@ -113,19 +114,12 @@ uint32_t calculate_power(const uint16_t voltage[], const uint16_t current[], uin
 	uint64_t total_sum_IV = 0;
 	
 	for (uint8_t i=0; i<samples; i++){
-		total_sum_IV += (uint32_t)(voltage[i]*approximate_step(1, current, i));
+		total_sum_IV += (uint32_t)(voltage[i]*current[i]);
 	}
 	uint32_t power = total_sum_IV/samples;
 	return power;
 }
 
-int64_t calculate_real_power(const int32_t input_voltage[], int32_t const load_current[], const uint8_t samples){
-	int64_t total_sum = 0;
-	for (uint8_t i = 0; i<samples; i++){
-		total_sum += ((int64_t)input_voltage[i] * load_current[i]) / 40;
-	}
-	return total_sum;
-}
 uint32_t square_root(uint32_t n)
 {
 	uint32_t result = 0;
@@ -148,17 +142,16 @@ uint32_t square_root(uint32_t n)
 }
 
 
-uint16_t calculate_RMS(const uint16_t values[], uint8_t samples)
-{
-	uint64_t total_sum = 0;
 
-	for (uint8_t i = 0; i < samples; i++) {
-		total_sum += (uint32_t)values[i] * values[i];
+uint16_t calculate_RMS(const uint16_t values[], uint8_t samples){
+	float total_sum = 0.0f;
+	for (uint8_t i=0; i<samples; i++){
+		total_sum += (uint32_t)values[i]*values[i];
 	}
-
-	uint32_t mean_square = total_sum/samples;
-
-	return (uint16_t)square_root(mean_square);
+	
+	float integration_time = (float)samples;
+	
+	return (uint16_t)(sqrtf(total_sum/integration_time));
 }
 
 uint16_t calculate_peak(const uint16_t values[], uint8_t samples){

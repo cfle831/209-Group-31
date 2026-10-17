@@ -35,6 +35,5 @@ uint32_t square_root(uint32_t n);
 // Approximates half a step back to reduce percieved phase shift
 void approximate_step_back_all(uint16_t values[], uint8_t samples);
 
-int64_t calculate_real_power(const int32_t input_voltage[], int32_t const load_current[], uint8_t samples);
 
 #endif
