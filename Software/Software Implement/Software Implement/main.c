@@ -66,6 +66,7 @@ int main(void)
 			
 			//  testing
 			transmit_string("voltage");
+			transmit_new_line();
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				transmit_string(decimal_to_char(voltage[i]));
 				transmit_string(" ");
@@ -73,6 +74,7 @@ int main(void)
 				transmit_new_line();
 			}
 			transmit_string("current");
+			transmit_new_line();
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				transmit_string(decimal_to_char(current[i]));
 				transmit_string(" ");
