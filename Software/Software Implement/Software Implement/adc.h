@@ -11,8 +11,8 @@
 #define ESTIMATED_SAMPLE_TIME	0.000104f // Accurate for prescaler 16
 #define SAMPLES_TO_TAKE			40 //  Possibly should be changed
 
-#define VOLTAGE_ADC				0
-#define CURRENT_ADC				1
+#define VOLTAGE_ADC				(0)
+#define CURRENT_ADC				(1)
 
 
 // Initialise registers for adc 

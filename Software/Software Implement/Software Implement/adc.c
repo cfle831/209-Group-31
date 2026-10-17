@@ -208,6 +208,8 @@ ISR(ADC_vect) { // ADC conversion complete interrupt
 
 ISR(INT0_vect){
 	adc_sample_enable();
+	voltage_read = 1;
 	start_sampling = 1;
 	EIMSK &= ~(1 << INT0); // Disable (this) INT0 interrupt
+	ADMUX = (ADMUX & 0xF0) | VOLTAGE_ADC;
 }

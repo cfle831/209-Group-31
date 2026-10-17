@@ -64,11 +64,22 @@ int main(void)
 			// Calculate power
 			int64_t power_value = calculate_power(input_voltage, load_current, SAMPLES_TO_TAKE);
 			
-			transmit_text("power", 5);
-			//  testing 
-			
-			
-			
+			//  testing
+			transmit_string("voltage");
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
+				transmit_string(decimal_to_char(voltage[i]));
+				transmit_string(" ");
+				transmit_string(decimal_to_char(i));
+				transmit_new_line();
+			}
+			transmit_string("current");
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
+				transmit_string(decimal_to_char(current[i]));
+				transmit_string(" ");
+				transmit_string(decimal_to_char(i));
+				transmit_new_line();
+			}
+
 			
 			// Enable zero crossing detection
 			EIMSK |= (1 << INT0);
