@@ -18,7 +18,7 @@
 #include "timer.h"
 #include "display.h"
 
-extern volatile uint8_t adc_samples_full; // From timer.c
+volatile uint8_t adc_samples_full = 0; // From timer.c
 extern volatile uint16_t voltage[SAMPLES_TO_TAKE];
 extern volatile uint16_t current[SAMPLES_TO_TAKE];
 volatile int32_t input_voltage[SAMPLES_TO_TAKE];
@@ -28,17 +28,20 @@ int main(void)
 	_delay_ms(1000);
 	volatile uint16_t display_value = 1024;
 	usart_init(12);
-	//transmit_text("start", 5); //
-	//transmit_new_line();		//
+	transmit_text("start", 5); //
+	transmit_new_line();		//
 	pwm_init();
-	timer2_init();
+	timer0_init(); // For adc sampling
+	timer2_init(); // For display updating
 	display_init();
 	adc_init();
 	sei();
 	
 	// Replace with your application code
 	adc_read(0); // dummy conversion to settle values
-	adc_sample_enable(); //
+	
+	adc_sample_enable(); 
+	
 	// The PWM signal is inverted at the shift register
 	set_duty_cycle(75); 
 	
@@ -48,7 +51,7 @@ int main(void)
     while (1) 
     {
 		if (adc_samples_full){
-			
+			usart_transmit('A');
 			// Using voltage samples get input voltage
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				input_voltage[i] = find_load_voltage(voltage[i]);
@@ -62,9 +65,22 @@ int main(void)
 			}
 			// Calculate power
 			int64_t power_value = calculate_real_power(input_voltage, load_current, SAMPLES_TO_TAKE);
-			//TESTING
+			
 			// Enable ADC sampling
 			adc_sample_enable();
+			
+			//TESTING
+			transmit_text("Voltage -----", 13);
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
+				transmit_string(decimal_to_char(input_voltage[i]));
+				transmit_new_line();
+			}
+			transmit_new_line();
+			transmit_text("Current -----", 13);
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
+				transmit_string(decimal_to_char(load_current[i]));
+				transmit_new_line();
+			}
 		}
     }
 }

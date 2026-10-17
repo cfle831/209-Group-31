@@ -7,7 +7,7 @@
 #include <avr/io.h>
 
 volatile uint8_t voltage_read = 1;
-extern volatile uint8_t adc_samples_full;
+extern volatile uint8_t adc_samples_full; // From main
 volatile uint16_t voltage[SAMPLES_TO_TAKE];
 volatile uint16_t current[SAMPLES_TO_TAKE];
 volatile uint8_t index = 0;
@@ -43,7 +43,8 @@ void timer2_init(void){
 }
 
 void timer0_init(void){
-	TCCR0B |= (1<<WGM01) | (1<<CS00); // No prescaler and set CTC
+	TCCR0A |= (1<<WGM01); // set CTC
+	TCCR0B |= (1<<CS00); // No prescaler 
 	
 	OCR0A = 199; // Set compare every 100us, 10khz
 	TCNT0 = 0; // reset timer/counter1

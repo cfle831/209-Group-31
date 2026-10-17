@@ -11,7 +11,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-volatile uint8_t adc_samples_full; // From timer.c
+extern volatile uint8_t adc_samples_full; // From timer.c
 
 /* in order to acheive a *maximum* sampling frequency of 10kHz, samples must be taken ~100us apart */
 /* Sampling frequency must not be a multiple of 500Hz*/
