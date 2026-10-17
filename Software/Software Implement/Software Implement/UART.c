@@ -71,7 +71,6 @@ void usart_transmit(uint8_t data){
 			 break;
 		 }
 		 usart_transmit(text[i]);
-		 _delay_ms(5);
 	 }
 	 
  }
@@ -80,7 +79,6 @@ void usart_transmit(uint8_t data){
  void transmit_text(char text[], uint8_t length){
 	 for (uint8_t i = 0; i<length; i++){
 		 usart_transmit(text[i]);
-		 _delay_ms(5);
 	 }
  }
 

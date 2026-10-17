@@ -73,14 +73,14 @@ int32_t find_load_current(uint16_t adc_measurement){
 	* Input voltage divider: V= I * Rshunt so I = V / 0.5021
 	* Corrective value: 1.4855
 	*/
-	int32_t adc_value = adc_measurement;
-	adc_value -= 415;
+	int32_t return_value = adc_measurement;
+	return_value -= 415;
 	
-	adc_value *= 5000; // to get pure ac value in mV
-	adc_value /= 1024;
-	adc_value /= (2.47177*0.817*0.5021);
-	adc_value *= 1.4855;
-	return (adc_value);
+	return_value *= 5000; // to get pure ac value in mV
+	return_value /= 1024;
+	return_value /= (2.47177*0.817*0.5021);
+	return_value *= 1.4855;
+	return (return_value);
 }
 
 uint16_t adc_convert_mv(uint16_t adc_count){

@@ -3,9 +3,9 @@
  <FRAME activewindow="0">
   <PLACEMENT>2c00000002000000030000000083ffff0083ffffffffffffffffffffae0000000c000000d2060000fe030000</PLACEMENT>
   <WINDOW type="default" module="ISIS">
-   <editor metric="0" gridmajor="2540000" mode="00000000" zoom="0" scale="91" flipped="0" gridminor="254000" gridmode="16" snapidx="2" snap="254000" xcursor="0" orgmode="0" snaprange="139560">
+   <editor metric="0" gridmajor="2540000" mode="00000001" zoom="-1" scale="122" flipped="0" gridminor="254000" gridmode="16" snapidx="2" snap="254000" xcursor="0" orgmode="0" snaprange="127000">
     <world y1="-12192000" x1="-18542000" y2="12192000" x2="18542000"/>
-    <centre x="0" y="0"/>
+    <centre x="-2752699" y="-3023217"/>
     <origin x="0" y="0"/>
    </editor>
   </WINDOW>
@@ -18,9 +18,9 @@
   </editor>
  </MODULE>
  <MODULE name="ISIS">
-  <editor metric="0" gridmajor="2540000" mode="00000000" zoom="0" scale="91" flipped="0" gridminor="254000" gridmode="16" snapidx="2" snap="254000" xcursor="0" orgmode="0" snaprange="139560">
+  <editor metric="0" gridmajor="2540000" mode="00000001" zoom="-1" scale="122" flipped="0" gridminor="254000" gridmode="16" snapidx="2" snap="254000" xcursor="0" orgmode="0" snaprange="127000">
    <world y1="-12192000" x1="-18542000" y2="12192000" x2="18542000"/>
-   <centre x="0" y="0"/>
+   <centre x="-2752699" y="-3023217"/>
    <origin x="0" y="0"/>
   </editor>
  </MODULE>
@@ -35,30 +35,41 @@
      <ITEM name="Version">100</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="350" x="54" flags="00000032" y="150" h="200" pid="1" iid="-1">
+   <POPUP w="610" x="378" flags="00000033" y="476" h="454" pid="1" iid="-1">
     <PROPERTIES>
      <ITEM name="Address Column Width">85</ITEM>
      <ITEM name="AutoResize">No</ITEM>
      <ITEM name="Gridlines">Yes</ITEM>
-     <ITEM name="Name Column Width">85</ITEM>
-     <ITEM name="ShowAddresses">Yes</ITEM>
-     <ITEM name="ShowPreviousValues">No</ITEM>
+     <ITEM name="Item 0">"ADMUX","0080007C",00000001,0000000E,124,1,6,00000002,0,00000000,00000000</ITEM>
+     <ITEM name="Item 1">"ADC","00800078",00000001,0000000E,120,2,4,00000003,0,00000000,00000000</ITEM>
+     <ITEM name="Item 2">"ADCSRA","0080007A",00000001,0000000E,122,1,6,00000002,0,00000000,00000000</ITEM>
+     <ITEM name="Item 3">"voltage","00800125",00000001,0000000E,293,80,-1,1BB80000,0,00000000,00000000</ITEM>
+     <ITEM name="Item 4">"current","00800175",00000001,0000000E,373,80,-1,1BB80000,0,00000000,00000000</ITEM>
+     <ITEM name="Item 5">"idx","00800306",00000001,0000000E,774,1,6,00000002,0,00000000,00000000</ITEM>
+     <ITEM name="Item 6">"index","00800119",00000001,0000000E,281,1,6,00000002,0,00000000,00000000</ITEM>
+     <ITEM name="Item 7">"input_voltage","008001C5",00000001,0000000E,453,160,-1,5CB80000,0,00000000,00000000</ITEM>
+     <ITEM name="Item 8">"load_current","00800125",00000001,0000000E,293,160,-1,5CB80000,0,00000000,00000000</ITEM>
+     <ITEM name="Item 9">"voltage_read","0080010F",00000001,0000000E,271,1,0,00000002,0,00000000,00000000</ITEM>
+     <ITEM name="Name Column Width">174</ITEM>
+     <ITEM name="Previous Value Column Width">145</ITEM>
+     <ITEM name="ShowAddresses">No</ITEM>
+     <ITEM name="ShowPreviousValues">Yes</ITEM>
      <ITEM name="ShowTypes">No</ITEM>
-     <ITEM name="ShowWatchPoint">Yes</ITEM>
+     <ITEM name="ShowWatchPoint">No</ITEM>
      <ITEM name="TriggerMode">0</ITEM>
-     <ITEM name="Value Column Width">85</ITEM>
+     <ITEM name="Value Column Width">155</ITEM>
      <ITEM name="Version">100</ITEM>
      <ITEM name="Watch Expression Column Width">85</ITEM>
-     <ITEM name="nItems">0</ITEM>
+     <ITEM name="nItems">10</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="1384" x="74" flags="00000000" y="162" h="872" pid="0" iid="30">
+   <POPUP w="1384" x="311" flags="00008001" y="162" h="872" pid="0" iid="30">
     <PROPERTIES/>
    </POPUP>
-   <POPUP w="1384" x="379" flags="00000000" y="256" h="872" pid="0" iid="8">
+   <POPUP w="1384" x="278" flags="00000000" y="162" h="872" pid="0" iid="8">
     <PROPERTIES/>
    </POPUP>
-   <POPUP w="450" x="1253" flags="00008023" y="310" h="250" pid="0" iid="2">
+   <POPUP w="450" x="1416" flags="00000023" y="565" h="250" pid="0" iid="2">
     <PROPERTIES>
      <ITEM name="AutoEcho">0</ITEM>
      <ITEM name="HexMode">0</ITEM>
@@ -130,12 +141,12 @@
    <POPUP w="600" x="274" flags="0000000a" y="370" h="400" pid="1" iid="1">
     <PROPERTIES/>
    </POPUP>
-   <POPUP w="300" x="294" flags="0000000a" y="390" h="300" pid="2" iid="1">
+   <POPUP w="602" x="349" flags="0000000b" y="517" h="517" pid="2" iid="1">
     <PROPERTIES>
-     <ITEM name="Address Column Width">96</ITEM>
+     <ITEM name="Address Column Width">0</ITEM>
      <ITEM name="AutoResize">No</ITEM>
      <ITEM name="Gridlines">Yes</ITEM>
-     <ITEM name="Name Column Width">96</ITEM>
+     <ITEM name="Name Column Width">191</ITEM>
      <ITEM name="ShowAddresses">Yes</ITEM>
      <ITEM name="ShowGlobals">Yes</ITEM>
      <ITEM name="ShowPreviousValues">No</ITEM>
