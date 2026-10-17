@@ -49,6 +49,7 @@ int main(void)
     while (1) 
     {
 		if (adc_samples_full){
+			adc_samples_full = 0;
 			// Using voltage samples get input voltage
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				input_voltage[i] = find_load_voltage(voltage[i]);
@@ -63,6 +64,7 @@ int main(void)
 			// Calculate power
 			int64_t power_value = calculate_power(input_voltage, load_current, SAMPLES_TO_TAKE);
 			
+			transmit_text("power", 5);
 			//  testing 
 			
 			
@@ -70,6 +72,7 @@ int main(void)
 			
 			// Enable zero crossing detection
 			EIMSK |= (1 << INT0);
+			start_sampling = 0;
 			
 		}else if(start_sampling) {
 			ADCSRA |= (1 << ADSC); // Start a conversion

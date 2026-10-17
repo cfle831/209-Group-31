@@ -37,9 +37,7 @@ void adc_init(void){
 	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
 	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
 	
-	ADMUX |= (1 << VOLTAGE_ADC);
 	ADCSRA |= (1 << ADSC); // dummy conversion to settle values
-	ADC = 0;
 }
 
 void adc_sample_enable(void){
@@ -169,41 +167,42 @@ uint16_t calculate_peak(const uint16_t values[], uint8_t samples){
 /////// ISR ///////
 
 ISR(ADC_vect) { // ADC conversion complete interrupt
+	if (!start_sampling) return;
 	// sample adc
 	// alternate between voltage and current adc
 	
 	// Store values from most recent conversion
+	/*
 	uint8_t value_low = ADCL;
-	uint8_t value_high = ADCH;
+	uint16_t value_high = ADCH << 8;
+	uint16_t adc_val = value_high | value_low;
+	*/
+	uint16_t adc_val = ADC;
 	
-	if (!adc_samples_full){
-		if (voltage_read){
-			// Log the voltage adc sample in array
-			voltage[idx] = (((uint16_t)value_high << 8) | value_low);
+	if (voltage_read){
+		// Log the voltage adc sample in array
+		voltage[idx] = adc_val;
 			
-			// Switch to the current sense channel
-			ADMUX &= (0xF0); // Lower MUX bits
-			ADMUX |= CURRENT_ADC;
-			voltage_read = 0;
+		// Switch to the current sense channel
+		ADMUX &= (0xF0); // Lower MUX bits
+		ADMUX |= CURRENT_ADC;
+		voltage_read = 0;
 			
-		} else {
-			// Store current adc sample in array
-			current[idx] = (((uint16_t)value_high << 8) | value_low);
+	} else {
+		// Store current adc sample in array
+		current[idx] = adc_val;
 			
-			// Switch to voltage sense channel
-			ADMUX &= (0xF0); // Lower MUX bits
-			ADMUX |= VOLTAGE_ADC; // theory - reading vzc
-			voltage_read = 1;
+		// Switch to voltage sense channel
+		ADMUX &= (0xF0); // Lower MUX bits
+		ADMUX |= VOLTAGE_ADC; // theory - reading vzc
+		voltage_read = 1;
 			
-			// increment array index
-			idx++;
-			if (idx == SAMPLES_TO_TAKE){
-				idx = 0;
-				adc_sample_disable();
-				
-			}
+		// increment array index
+		idx++;
+		if (idx == SAMPLES_TO_TAKE){
+			idx = 0;
+			adc_sample_disable();
 		}
-		ADC = 0;
 	}
 }
 
