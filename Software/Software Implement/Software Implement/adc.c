@@ -45,11 +45,11 @@ int32_t find_load_voltage(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Vmeas Opamp: 1
-	* 2.12 V offset accurate ---> TODO
+	* 2.11 V offset 
 	* Input voltage divider: 0.04511
 	*/
 	
-	int32_t return_value = ((int32_t)adc_measurement-430)/0.817; // Finding exact offset voltage is very important for accuracy
+	int32_t return_value = ((int32_t)adc_measurement-432)/0.817; // Finding exact offset voltage is very important for accuracy
 	return_value *= 22; //   (0.04511)^-1
 	return return_value;
 }
@@ -58,15 +58,17 @@ int32_t find_load_current(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Imeas Opamp:  2.47177
-	* Offset: 2.04 V --> TODO
+	* Offset: 2.03 V 
 	* Input voltage divider: V= I * Rshunt so I = V / 0.5021
+	* Corrective value: 1.4855
 	*/
 	int32_t adc_value = adc_measurement;
-	adc_value -= 420;
+	adc_value -= 415;
 	
 	adc_value *= 5000; // to get pure ac value in mV
 	adc_value /= 1024;
 	adc_value /= (2.47177*0.817*0.5021);
+	adc_value *= 1.4855;
 	return (adc_value);
 }
 
