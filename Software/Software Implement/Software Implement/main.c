@@ -6,8 +6,6 @@
  */ 
 
 #define F_CPU 2000000UL
-#define VOLTAGE_MEAS_PIN 0
-#define CURRENT_MEAS_PIN 1
 #define V_OFFSET_MEAS_PIN 2
 
 #include <avr/io.h>
@@ -25,6 +23,7 @@ extern volatile uint16_t voltage[SAMPLES_TO_TAKE];
 extern volatile uint16_t current[SAMPLES_TO_TAKE];
 volatile int32_t input_voltage[SAMPLES_TO_TAKE];
 volatile int32_t load_current[SAMPLES_TO_TAKE];
+
 int main(void)
 {
 	_delay_ms(1000);
@@ -33,16 +32,15 @@ int main(void)
 	transmit_text("start", 5); //
 	transmit_new_line();		//
 	pwm_init();
-	timer0_init(); // For adc sampling
 	timer2_init(); // For display updating
+	zero_crossing_init();
 	display_init();
 	adc_init();
 	sei();
 	
 	// Replace with your application code
-	adc_read(0); // dummy conversion to settle values
-	
-	adc_sample_enable(); 
+	ADCSRA |= (1 << ADSC); // dummy conversion to settle values
+
 	
 	// The PWM signal is inverted at the shift register
 	set_duty_cycle(75); 
@@ -53,8 +51,6 @@ int main(void)
     while (1) 
     {
 		if (adc_samples_full){
-			
-			
 			// Using voltage samples get input voltage
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				input_voltage[i] = find_load_voltage(voltage[i]);
@@ -71,15 +67,16 @@ int main(void)
 			
 			//  testing 
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				transmit_string(decimal_to_char(load_current[i]));
+				transmit_string(decimal_to_char(input_voltage[i]));
 				transmit_new_line();
 			}
 			break;
 			
-			
-			// Enable ADC sampling
-			adc_sample_enable();
-
+			// Enable zero crossing detection
+			EIMSK |= (1 << INT0);
+		}
+		else {
+			ADCSRA |= (1 << ADSC);
 		}
     }
 }

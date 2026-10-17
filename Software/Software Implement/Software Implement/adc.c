@@ -13,10 +13,18 @@
 #include <float.h>
 
 extern volatile uint8_t adc_samples_full; // From timer.c
+volatile uint8_t voltage_read = 1;
+volatile uint16_t voltage[SAMPLES_TO_TAKE];
+volatile uint16_t current[SAMPLES_TO_TAKE];
+volatile uint8_t idx = 0;
 
 /* in order to acheive a *maximum* sampling frequency of 10kHz, samples must be taken ~100us apart */
 /* Sampling frequency must not be a multiple of 500Hz*/
 
+void zero_crossing_init(void){
+	EICRA |= (3 << ISC00);
+	EIMSK |= (1 << INT0);
+}
 
 void adc_init(void){
 	// Enable ADC converter
@@ -27,16 +35,19 @@ void adc_init(void){
 	ADCSRB = 0x00;
 	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
 	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
+
+	ADMUX = 0xF0;
+	ADMUX |= (1 << VOLTAGE_ADC);
 }
 
 void adc_sample_enable(void){
 	adc_samples_full = 0;
-	TIMSK0 |= (1<<OCIE0A);
+	ADCSRA |= (1 << ADIE);
 }
 
 void adc_sample_disable(void){
 	adc_samples_full = 1;
-	TIMSK0 &= ~(1<<OCIE0A); // Disable interrupt
+	ADCSRA &= ~(1<<ADIE); // Disable interrupt
 }
 
 
@@ -70,22 +81,6 @@ int32_t find_load_current(uint16_t adc_measurement){
 	adc_value /= (2.47177*0.817*0.5021);
 	adc_value *= 1.4855;
 	return (adc_value);
-}
-
-uint16_t adc_read(uint8_t chan){
-	// Select channel from input
-	ADMUX &= ~((1<<MUX3) | (1<<MUX2) | (1<<MUX1) | (1<<MUX0));
-	ADMUX |= chan;
-	
-	// Start conversion
-	ADCSRA |= (1<<ADSC);
-	// Wait
-	while(!(ADCSRA  & (1<<ADIF)));
-	uint8_t return_value_low = ADCL;
-	uint8_t return_value_high = ADCH;
-	uint16_t return_value = (((uint16_t)return_value_high << 8) | return_value_low);
-	return return_value;
-	
 }
 
 uint16_t adc_convert_mv(uint16_t adc_count){
@@ -170,3 +165,42 @@ uint16_t calculate_peak(const uint16_t values[], uint8_t samples){
 }
 
 
+/////// ISR ///////
+
+ISR(ADC_vect) {
+	// sample adc
+	// alternate between voltage and current adc
+	uint8_t value_low = ADCL;
+	uint8_t value_high = ADCH;
+	
+	if (!adc_samples_full){
+		if (voltage_read){
+			// Log the voltage adc sample in array
+			voltage[idx] = (((uint16_t)value_high << 8) | value_low);
+			
+			// Switch to current channel
+			ADMUX = 0xF0;
+			ADMUX |= (1 << CURRENT_ADC);
+			voltage_read = 0;
+			
+			} else {
+			current[idx] = (((uint16_t)value_high << 8) | value_low);
+			ADMUX = 0xF0;
+			ADMUX |= (1 << VOLTAGE_ADC);
+			voltage_read = 1;
+			
+			// increment array index
+			idx++;
+			if (idx == SAMPLES_TO_TAKE){
+				idx = 0;
+				adc_sample_disable();
+			}
+		}
+		ADC = 0;
+	}
+}
+
+ISR(INT0_vect){
+	adc_sample_enable();
+	EIMSK &= ~(1 << INT0);
+}

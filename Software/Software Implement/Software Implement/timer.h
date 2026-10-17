@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 // MACRO HELPER
-
 // Writes to 16 bit registers
 #define SIXTEEN_BIT_REG_SET(high, low, num) {	\
 	high = ((num >> 8) & 0xFF);					\
@@ -21,6 +21,6 @@ void set_duty_cycle(uint8_t percentage);
 void timer2_init();
 
 // timer for adc
-void timer0_init();
+// void timer0_init();
 
 #endif

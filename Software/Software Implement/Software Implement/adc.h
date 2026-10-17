@@ -5,14 +5,20 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 #define  V_REF 5
-#define ESTIMATED_SAMPLE_TIME 0.000104f // Accurate for prescaler 16
-#define SAMPLES_TO_TAKE 40 //  Possibly should be changed
+#define ESTIMATED_SAMPLE_TIME	0.000104f // Accurate for prescaler 16
+#define SAMPLES_TO_TAKE			40 //  Possibly should be changed
+
+#define VOLTAGE_ADC				MUX0
+#define CURRENT_ADC				MUX1
 
 
 // Initialise registers for adc 
 void adc_init(void);
+
+void zero_crossing_init(void);
 
 // Enable and disable the adc sampling
 void adc_sample_enable(void);
