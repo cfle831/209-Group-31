@@ -12,7 +12,8 @@
 #include <util/delay.h>
 #include <float.h>
 
-extern volatile uint8_t adc_samples_full; // From timer.c
+extern volatile uint8_t adc_samples_full; // From main.c
+extern volatile uint8_t start_sampling;
 volatile uint8_t voltage_read = 1;
 volatile uint16_t voltage[SAMPLES_TO_TAKE];
 volatile uint16_t current[SAMPLES_TO_TAKE];
@@ -35,9 +36,10 @@ void adc_init(void){
 	ADCSRB = 0x00;
 	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
 	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
-
-	ADMUX = 0xF0;
+	
 	ADMUX |= (1 << VOLTAGE_ADC);
+	ADCSRA |= (1 << ADSC); // dummy conversion to settle values
+	ADC = 0;
 }
 
 void adc_sample_enable(void){
@@ -161,7 +163,6 @@ uint16_t calculate_peak(const uint16_t values[], uint8_t samples){
 		}
 	}
 	return peak_value;
-	
 }
 
 
@@ -182,7 +183,7 @@ ISR(ADC_vect) { // ADC conversion complete interrupt
 			
 			// Switch to the current sense channel
 			ADMUX &= (0xF0); // Lower MUX bits
-			ADMUX |= (1 << CURRENT_ADC);
+			ADMUX |= CURRENT_ADC;
 			voltage_read = 0;
 			
 		} else {
@@ -191,7 +192,7 @@ ISR(ADC_vect) { // ADC conversion complete interrupt
 			
 			// Switch to voltage sense channel
 			ADMUX &= (0xF0); // Lower MUX bits
-			ADMUX |= (1 << VOLTAGE_ADC); 
+			ADMUX |= VOLTAGE_ADC; // theory - reading vzc
 			voltage_read = 1;
 			
 			// increment array index
@@ -208,5 +209,6 @@ ISR(ADC_vect) { // ADC conversion complete interrupt
 
 ISR(INT0_vect){
 	adc_sample_enable();
+	start_sampling = 1;
 	EIMSK &= ~(1 << INT0); // Disable (this) INT0 interrupt
 }

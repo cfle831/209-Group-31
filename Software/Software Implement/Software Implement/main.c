@@ -18,15 +18,16 @@
 
 #include <stdlib.h> // testing
 
-volatile uint8_t adc_samples_full = 0; // From timer.c
+volatile uint8_t adc_samples_full = 0; 
+volatile uint8_t start_sampling = 0;
 extern volatile uint16_t voltage[SAMPLES_TO_TAKE];
 extern volatile uint16_t current[SAMPLES_TO_TAKE];
 volatile int32_t input_voltage[SAMPLES_TO_TAKE];
 volatile int32_t load_current[SAMPLES_TO_TAKE];
 
+
 int main(void)
 {
-	_delay_ms(1000);
 	volatile uint16_t display_value = 1024;
 	usart_init(12);
 	
@@ -40,14 +41,9 @@ int main(void)
 	adc_init();
 	sei();
 	
-	// Replace with your application code
-	ADCSRA |= (1 << ADSC); // dummy conversion to settle values
-
 	
 	// The PWM signal is inverted at the shift register
 	set_duty_cycle(75); 
-	
-	
 	
 	change_display_value(display_value);
     while (1) 
@@ -68,17 +64,15 @@ int main(void)
 			int64_t power_value = calculate_power(input_voltage, load_current, SAMPLES_TO_TAKE);
 			
 			//  testing 
-			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				transmit_string(decimal_to_char(input_voltage[i]));
-				transmit_new_line();
-			}
-			break;
+			
+			
+			
 			
 			// Enable zero crossing detection
 			EIMSK |= (1 << INT0);
-		}
-		else {
-			ADCSRA |= (1 << ADSC); // Start a conversion --> WRONG
+			
+		}else if(start_sampling) {
+			ADCSRA |= (1 << ADSC); // Start a conversion
 		}
     }
 }

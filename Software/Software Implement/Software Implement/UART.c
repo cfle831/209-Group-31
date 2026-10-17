@@ -22,8 +22,6 @@ void usart_init(uint16_t ubrr){
 	UCSR0C &= ~((1<<UPM00) | (1<<UPM01));
 	// Stop Bits - 1
 	UCSR0C &= ~(1<<USBS0);
-	
-	
 }
 
 char string_9_dig[11] = {};
