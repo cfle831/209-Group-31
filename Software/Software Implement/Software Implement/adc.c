@@ -11,6 +11,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <float.h>
+#include <stdint.h> //
+#include <math.h> //
 
 extern volatile uint8_t adc_samples_full; // From main.c
 extern volatile uint8_t start_sampling;
@@ -62,6 +64,8 @@ int32_t find_load_voltage(uint16_t adc_measurement){
 	
 	int32_t return_value = ((int32_t)adc_measurement-432)/0.817; // Finding exact offset voltage is very important for accuracy
 	return_value *= 22; //   (0.04511)^-1
+	return_value *= 5000;
+	return_value /= 1024;
 	return return_value;
 }
 
@@ -139,16 +143,18 @@ uint32_t square_root(uint32_t n)
 }
 
 
+// Calculate rms used for testing 
+double calculate_rms(const int32_t *samples, int32_t count) {
+	
 
-uint16_t calculate_RMS(const uint16_t values[], uint8_t samples){
-	float total_sum = 0.0f;
-	for (uint8_t i=0; i<samples; i++){
-		total_sum += (uint32_t)values[i]*values[i];
+	double sum_of_squares = 0.0;
+
+	for (int32_t i = 0; i < count; i++) {
+		double val = (double)samples[i];
+		sum_of_squares += val * val;
 	}
-	
-	float integration_time = (float)samples;
-	
-	return (uint16_t)(sqrtf(total_sum/integration_time));
+
+	return sqrt(sum_of_squares / count);
 }
 
 uint16_t calculate_peak(const uint16_t values[], uint8_t samples){

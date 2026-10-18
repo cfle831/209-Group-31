@@ -16,8 +16,9 @@
 #include "timer.h"
 #include "display.h"
 
-#include <stdlib.h> // testing
 
+#include <stdlib.h> // testing
+#include <stdint.h> // 
 volatile uint8_t adc_samples_full = 0; 
 volatile uint8_t start_sampling = 0;
 extern volatile uint16_t voltage[SAMPLES_TO_TAKE];
@@ -65,7 +66,7 @@ int main(void)
 			int64_t power_value = calculate_power(input_voltage, load_current, SAMPLES_TO_TAKE);
 			
 			//  testing
-			transmit_string("voltage");
+			transmit_string("raw voltage");
 			transmit_new_line();
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				transmit_string(decimal_to_char(voltage[i]));
@@ -73,7 +74,7 @@ int main(void)
 				transmit_string(decimal_to_char(i));
 				transmit_new_line();
 			}
-			transmit_string("current");
+			transmit_string("raw current");
 			transmit_new_line();
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				transmit_string(decimal_to_char(current[i]));
@@ -81,7 +82,27 @@ int main(void)
 				transmit_string(decimal_to_char(i));
 				transmit_new_line();
 			}
+			
+				// Processed values
+			transmit_string("In voltage");
+			transmit_new_line();
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
+				transmit_string(decimal_to_char(input_voltage[i]));
+				transmit_string(" ");
+				transmit_string(decimal_to_char(i));
+				transmit_new_line();
+			}
+			transmit_string("In current");
+			transmit_new_line();
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
+				transmit_string(decimal_to_char(load_current[i]));
+				transmit_string(" ");
+				transmit_string(decimal_to_char(i));
+				transmit_new_line();
+			}
+			change_display_value(calculate_rms(input_voltage, SAMPLES_TO_TAKE));
 
+			// End of testing 
 			
 			// Enable zero crossing detection
 			EIMSK |= (1 << INT0);
