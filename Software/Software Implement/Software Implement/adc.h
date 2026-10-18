@@ -7,7 +7,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define  V_REF 5
+
 #define SAMPLES_TO_TAKE			160 //  Possibly should be changed
 
 #define VOLTAGE_ADC				(0)

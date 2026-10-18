@@ -9,6 +9,7 @@
 #include <util/delay.h>
 #include <stdint.h>
 #include "display.h"
+#include "UART.h"
 
 // Pin definitions
 #define SH_CP (PINC3)

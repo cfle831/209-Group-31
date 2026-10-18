@@ -1,18 +1,18 @@
 /*
- * Lab4ADC.c
+ * adc.c
  *
  * Created: 12/09/2026 1:44:14 pm
  * Author : TFE, Ferre
  */ 
 #define F_CPU 2000000UL
+#define V_REF 5
 #include "adc.h"
-#include "UART.h"
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <float.h>
 #include <stdint.h> //
 #include <math.h> //
+#include "UART.h"
 
 extern volatile uint8_t adc_samples_full; // From main.c
 extern volatile uint8_t start_sampling;
@@ -54,7 +54,7 @@ int16_t find_load_voltage(uint16_t adc_measurement){
 	
 	int32_t return_value = ((int32_t)adc_measurement-432)/0.817; // Finding exact offset voltage is very important for accuracy
 	return_value *= 22; //   (0.04511)^-1
-	return_value *= 5000;
+	return_value *= 1000*V_REF;
 	return_value /= 1024;
 	return return_value;
 }
@@ -70,7 +70,7 @@ int16_t find_load_current(uint16_t adc_measurement){
 	int32_t return_value = adc_measurement;
 	return_value -= 415;
 	
-	return_value *= 5000; // to get pure ac value in mV
+	return_value *= 1000*V_REF; // to get pure ac value in mV
 	return_value /= 1024;
 	return_value /= (2.4718*0.817*0.5021);
 	return_value *= 0.8763;

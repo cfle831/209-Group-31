@@ -6,7 +6,6 @@
  */ 
 
 #define F_CPU 2000000UL
-#define V_OFFSET_MEAS_PIN 2
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -48,41 +47,55 @@ int main(void)
     while (1) 
     {
 		if (adc_samples_full){
+			
 			adc_samples_full = 0;
 			// Using voltage samples get input voltage
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				input_voltage[i] = find_load_voltage(voltage[i]);
 			}
 			
+			transmit_string("-"); // Testing
+			transmit_new_line();
+			
 			// Approximate half a step back for current values to prevent perceived phase shift
 			approximate_step_back_all(current, SAMPLES_TO_TAKE);
+			
+			transmit_string("--"); // Testing
+			transmit_new_line();
+			
 			// Using current samples get load current
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				load_current[i] = find_load_current(current[i]);
 			}
+			
+			transmit_string("---"); // Testing
+			transmit_new_line();
+			
 			// Calculate instantaneous power
 			calculate_inst_power(input_voltage, load_current, SAMPLES_TO_TAKE, instantaneous_power);
 			
-			/*
-			//  testing
-			transmit_string("adc");
+			transmit_string("----"); // Testing
 			transmit_new_line();
-			for (uint8_t i = 0; i<SAMPLES_TO_TAKE;i++){
-				transmit_string(decimal_to_char(current[i]));
-				transmit_new_line();
-			}
 			
-			transmit_string("current");
-			transmit_new_line();
-			for(uint8_t i = 0;i<SAMPLES_TO_TAKE;i++){
-				transmit_string(decimal_to_char(load_current[i]));
-				transmit_new_line();
-			}
-			*/
+			// Testing 
+			
 			double rms_value = (calculate_rms(input_voltage, SAMPLES_TO_TAKE));
+			
+			transmit_string("-----"); // Testing
+			transmit_new_line();
+			
 			change_display_value(rms_value);
+			
+			transmit_string("------"); // Testing
+			transmit_new_line();
+			
 			transmit_string(decimal_to_char(rms_value));
 			transmit_new_line();
+			
+			transmit_string("-------");
+			transmit_new_line();
+			transmit_new_line();
+			
 			// End of testing 
 			
 			
