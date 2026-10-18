@@ -54,51 +54,24 @@ int main(void)
 				input_voltage[i] = find_load_voltage(voltage[i]);
 			}
 			
-			transmit_string("-"); // Testing
-			transmit_new_line();
-			
-			transmit_string("--"); // Testing
-			transmit_new_line();
-			
 			// Using current samples get load current
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				load_current[i] = find_load_current(current[i]);
 			}
 			
-			transmit_string("---"); // Testing
-			transmit_new_line();
-			
 			// Calculate instantaneous power
 			calculate_inst_power(input_voltage, load_current, SAMPLES_TO_TAKE, instantaneous_power);
 			
-			transmit_string("----"); // Testing
-			transmit_new_line();
-			
 			// Testing 
-			
 			double rms_value = (calculate_rms(input_voltage, SAMPLES_TO_TAKE));
-			
-			transmit_string("-----"); // Testing
-			transmit_new_line();
-			
 			change_display_value(rms_value);
-			
-			transmit_string("------"); // Testing
-			transmit_new_line();
-			
-			transmit_string(decimal_to_char(rms_value));
-			transmit_new_line();
-			
-			transmit_string("-------");
-			transmit_new_line();
-			transmit_new_line();
-			
+			// transmit_string(decimal_to_char(rms_value));
+			//print_raw_waveform();
 			// End of testing 
 			
 			
 			// Enable zero crossing detection
 			EIMSK |= (1 << INT0);
-			
 			
 		} else if(start_sampling) {
 			ADCSRA |= (1 << ADSC); // Start a conversion

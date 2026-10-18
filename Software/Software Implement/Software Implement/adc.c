@@ -16,7 +16,7 @@
 
 extern volatile uint8_t adc_samples_full; // From main.c
 extern volatile uint8_t start_sampling;
-static volatile uint8_t voltage_read = 0;
+static volatile uint8_t voltage_read = 1;
 volatile uint16_t voltage[SAMPLES_TO_TAKE];
 volatile uint16_t current[SAMPLES_TO_TAKE];
 static volatile uint8_t idx = 0;
@@ -38,6 +38,9 @@ void adc_init(void){
 	ADCSRB = 0x00;
 	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
 	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
+	
+	ADMUX &= (0xF0); // Lower MUX bits
+	ADMUX |= VOLTAGE_ADC;
 	
 	ADCSRA |= (1 << ADSC); // dummy conversion to settle values
 	while(!(ADCSRA  & (1<<ADIF)));
@@ -104,6 +107,26 @@ void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples,
 	return;
 }
 
+// show raw adc values for testing
+void print_raw_waveform(void){
+	transmit_string("Voltage");
+	transmit_new_line();
+	for (uint8_t i = 0; i<SAMPLES_TO_TAKE;i++){
+		transmit_string(decimal_to_char(voltage[i]));
+		transmit_string(" ");
+		transmit_string(decimal_to_char(i));
+		transmit_new_line();
+	}
+	
+	transmit_string("Current");
+	transmit_new_line();
+	for(uint8_t i = 0;i<SAMPLES_TO_TAKE;i++){
+		transmit_string(decimal_to_char(current[i]));
+		transmit_string(" ");
+		transmit_string(decimal_to_char(i));
+		transmit_new_line();
+	}
+}
 
 // Calculate rms used for testing 
 double calculate_rms(const int16_t *samples, uint8_t count) {

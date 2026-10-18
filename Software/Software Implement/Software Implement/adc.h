@@ -38,6 +38,6 @@ uint32_t square_root(uint32_t n);
 
 // for testing
 double calculate_rms(const int16_t *samples, uint8_t count);
-
+void print_raw_waveform(void);
 
 #endif
