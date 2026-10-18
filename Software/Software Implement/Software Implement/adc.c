@@ -76,7 +76,7 @@ int32_t find_load_current(uint16_t adc_measurement){
 	* Imeas Opamp:  2.47177
 	* Offset: 2.03 V 
 	* Input voltage divider: V= I * Rshunt so I = V / 0.5021
-	* Corrective value: 1.65
+	* Corrective value: 1.78
 	*/
 	int32_t return_value = adc_measurement;
 	return_value -= 415;
@@ -84,7 +84,7 @@ int32_t find_load_current(uint16_t adc_measurement){
 	return_value *= 5000; // to get pure ac value in mV
 	return_value /= 1024;
 	return_value /= (2.47177*0.817*0.5021);
-	return_value *= 1.65;
+	return_value *= 1.78;
 	return (return_value);
 }
 
@@ -102,14 +102,14 @@ void approximate_step_back_all(uint16_t values[], uint8_t samples){
 	}
 }
 
-uint32_t calculate_power(const uint16_t voltage[], const uint16_t current[], uint8_t samples){
-	uint64_t total_sum_IV = 0;
+
+// Returns an array in mW
+void calculate_inst_power(int32_t voltage[], int32_t current[], uint8_t samples, int16_t array_to_fill[]){
 	
-	for (uint8_t i=0; i<samples; i++){
-		total_sum_IV += (uint32_t)(voltage[i]*current[i]);
+	for (uint8_t i = 0; i<samples; i++){
+		array_to_fill[i] = (voltage[i] * current[i] / 1000);
 	}
-	uint32_t power = total_sum_IV/samples;
-	return power;
+	return;
 }
 
 uint32_t square_root(uint32_t n)

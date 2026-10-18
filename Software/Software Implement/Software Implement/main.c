@@ -23,12 +23,14 @@ volatile uint8_t adc_samples_full = 0;
 volatile uint8_t start_sampling = 0;
 extern volatile uint16_t voltage[SAMPLES_TO_TAKE];
 extern volatile uint16_t current[SAMPLES_TO_TAKE];
-volatile int32_t input_voltage[SAMPLES_TO_TAKE];
-volatile int32_t load_current[SAMPLES_TO_TAKE];
+
 
 
 int main(void)
 {
+	volatile int32_t input_voltage[SAMPLES_TO_TAKE]; // mV
+	volatile int32_t load_current[SAMPLES_TO_TAKE]; // mA
+	volatile int16_t instantaneous_power[SAMPLES_TO_TAKE]; // mW
 	usart_init(12);
 	
 	transmit_text("start", 5); //
@@ -60,16 +62,24 @@ int main(void)
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				load_current[i] = find_load_current(current[i]);
 			}
-			// Calculate power
-			int64_t power_value = calculate_power(input_voltage, load_current, SAMPLES_TO_TAKE);
+			transmit_string("Hello World!");
+			// Calculate instantaneous power
+			calculate_inst_power(input_voltage, load_current, SAMPLES_TO_TAKE, instantaneous_power);
 			
 			//  testing
-			
-			double rms_value= calculate_rms(load_current, SAMPLES_TO_TAKE);
-			change_display_value(rms_value);
-			transmit_string(decimal_to_char(rms_value));
+			transmit_string("Voltage");
 			transmit_new_line();
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE;i++){
+				transmit_string(decimal_to_char(input_voltage[i]));
+				transmit_new_line();
+			}
 			
+			transmit_string("Current");
+			transmit_new_line();
+			for(uint8_t i = 0;i<SAMPLES_TO_TAKE;i++){
+				transmit_string(decimal_to_char(load_current[i]));
+				transmit_new_line();
+			}
 			// End of testing 
 			
 			// Enable zero crossing detection
