@@ -16,8 +16,9 @@
 #define SH_ST (PINC5)
 
 volatile uint8_t dig_pins[4] = {(1<<PIND4), (1<<PIND5), (1<<PIND6), (1<<PIND7)};
-volatile uint8_t segment_0_to_9[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x67};
+const uint8_t segment_0_to_9[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x67};
 volatile uint16_t cur_display_value = 0;
+volatile uint16_t decimal_point_pos = 0;
 void send_next_char(uint8_t value, uint8_t decimal_point){
 	PORTC = 0;
 	value = segment_0_to_9[value];
@@ -69,17 +70,28 @@ void display_init(){
 }
 
 void change_display_value(uint16_t number){
-	cur_display_value = number;
+	
+	// if number in 1000's, decimal on first digit (leftmost)
+	// if number in 10,000's decimal on second digit, value must be divided by 10 to display correctly
+	if ((number/10000) % 10){
+		decimal_point_pos = 2;
+		cur_display_value = number / 10;
+	}else{
+		decimal_point_pos = 1;
+		cur_display_value = number;
+	}
+
+	
 }
 
-// Turns on each 7 seg sequentially, one per call
+// Turns on each 7 seg sequentially, one per call. Called in an interrupt
 void update_display(){  // POSSIBLE IMPROVEMENT store the differnet values / 10, 1000 etc in different variables so as little maths as possible is occuring 
 	static volatile uint8_t cur_dig = 1;
 	if (cur_dig == 1){
-		set_seg((cur_display_value/1000) % 10, 1, 1);
+		set_seg((cur_display_value/1000) % 10, 1, (decimal_point_pos & 1));
 		cur_dig++;
 	} else if (cur_dig == 2){
-		set_seg((cur_display_value/100) % 10, 2, 0);
+		set_seg((cur_display_value/100) % 10, 2, (decimal_point_pos & 2));
 		cur_dig++;
 	} else if (cur_dig == 3) {
 		set_seg((cur_display_value/10) % 10, 3, 0);

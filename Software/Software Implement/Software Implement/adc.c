@@ -60,11 +60,12 @@ int32_t find_load_voltage(uint16_t adc_measurement){
 	* Vmeas Opamp: 1
 	* 2.11 V offset 
 	* Input voltage divider: 0.04511
+	* Corrective value 1.1
 	*/
 	
 	int32_t return_value = ((int32_t)adc_measurement-432)/0.817; // Finding exact offset voltage is very important for accuracy
 	return_value *= 22; //   (0.04511)^-1
-	return_value *= 5000;
+	return_value *= 5000*1.1;
 	return_value /= 1024;
 	return return_value;
 }

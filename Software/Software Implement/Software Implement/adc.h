@@ -8,8 +8,7 @@
 #include <avr/interrupt.h>
 
 #define  V_REF 5
-#define ESTIMATED_SAMPLE_TIME	0.000104f // Accurate for prescaler 16
-#define SAMPLES_TO_TAKE			40 //  Possibly should be changed
+#define SAMPLES_TO_TAKE			160 //  Possibly should be changed
 
 #define VOLTAGE_ADC				(0)
 #define CURRENT_ADC				(1)
