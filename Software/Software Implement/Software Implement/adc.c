@@ -76,7 +76,7 @@ int32_t find_load_current(uint16_t adc_measurement){
 	* Imeas Opamp:  2.47177
 	* Offset: 2.03 V 
 	* Input voltage divider: V= I * Rshunt so I = V / 0.5021
-	* Corrective value: 1.4855
+	* Corrective value: 1.65
 	*/
 	int32_t return_value = adc_measurement;
 	return_value -= 415;
@@ -84,7 +84,7 @@ int32_t find_load_current(uint16_t adc_measurement){
 	return_value *= 5000; // to get pure ac value in mV
 	return_value /= 1024;
 	return_value /= (2.47177*0.817*0.5021);
-	return_value *= 1.4855;
+	return_value *= 1.65;
 	return (return_value);
 }
 
@@ -94,17 +94,7 @@ uint16_t adc_convert_mv(uint16_t adc_count){
 	return value;
 }
 
-// Approximates a step between index and the next value (either forwards or backwards)
-// Used to better align the current and voltage data sets
-uint16_t approximate_step(uint8_t d_backwards, const uint16_t values[], uint8_t index){
-	uint16_t return_value;
-	if (d_backwards){
-		return_value = ((uint32_t)values[index] + values[index - 1])/2;	
-	} else{
-		return_value = ((uint32_t)values[index] + values[index + 1])/2;
-	}
-	return return_value;
-}
+
 // Edits the input array
 void approximate_step_back_all(uint16_t values[], uint8_t samples){
 	for (uint8_t i = 1 ; i<samples; i++){

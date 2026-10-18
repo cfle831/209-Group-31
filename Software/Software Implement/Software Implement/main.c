@@ -29,7 +29,6 @@ volatile int32_t load_current[SAMPLES_TO_TAKE];
 
 int main(void)
 {
-	volatile uint16_t display_value = 1024;
 	usart_init(12);
 	
 	transmit_text("start", 5); //
@@ -44,9 +43,8 @@ int main(void)
 	
 	
 	// The PWM signal is inverted at the shift register
-	set_duty_cycle(75); 
+	set_duty_cycle(50); 
 	
-	change_display_value(display_value);
     while (1) 
     {
 		if (adc_samples_full){
@@ -66,46 +64,12 @@ int main(void)
 			int64_t power_value = calculate_power(input_voltage, load_current, SAMPLES_TO_TAKE);
 			
 			//  testing
-			/*
-			transmit_string("raw voltage");
-			transmit_new_line();
-			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				transmit_string(decimal_to_char(voltage[i]));
-				transmit_string(" ");
-				transmit_string(decimal_to_char(i));
-				transmit_new_line();
-			}
-			transmit_string("raw current");
-			transmit_new_line();
-			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				transmit_string(decimal_to_char(current[i]));
-				transmit_string(" ");
-				transmit_string(decimal_to_char(i));
-				transmit_new_line();
-			}
 			
-				// Processed values
-			transmit_string("In voltage");
-			transmit_new_line();
-			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				transmit_string(decimal_to_char(input_voltage[i]));
-				transmit_string(" ");
-				transmit_string(decimal_to_char(i));
-				transmit_new_line();
-			}
-			transmit_string("In current");
-			transmit_new_line();
-			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				transmit_string(decimal_to_char(load_current[i]));
-				transmit_string(" ");
-				transmit_string(decimal_to_char(i));
-				transmit_new_line();
-			}
-			*/
-			double rms_value= calculate_rms(input_voltage, SAMPLES_TO_TAKE);
+			double rms_value= calculate_rms(load_current, SAMPLES_TO_TAKE);
 			change_display_value(rms_value);
 			transmit_string(decimal_to_char(rms_value));
 			transmit_new_line();
+			
 			// End of testing 
 			
 			// Enable zero crossing detection
