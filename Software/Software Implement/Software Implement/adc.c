@@ -2,7 +2,7 @@
  * Lab4ADC.c
  *
  * Created: 12/09/2026 1:44:14 pm
- * Author : Loelene
+ * Author : TFE, Ferre
  */ 
 #define F_CPU 2000000UL
 #include "adc.h"
@@ -16,10 +16,10 @@
 
 extern volatile uint8_t adc_samples_full; // From main.c
 extern volatile uint8_t start_sampling;
-volatile uint8_t voltage_read = 1;
+static volatile uint8_t voltage_read = 0;
 volatile uint16_t voltage[SAMPLES_TO_TAKE];
 volatile uint16_t current[SAMPLES_TO_TAKE];
-volatile uint8_t idx = 0;
+static volatile uint8_t idx = 0;
 
 /* in order to acheive a *maximum* sampling frequency of 10kHz, samples must be taken ~100us apart */
 /* Sampling frequency must not be a multiple of 500Hz*/
@@ -41,17 +41,6 @@ void adc_init(void){
 	
 	ADCSRA |= (1 << ADSC); // dummy conversion to settle values
 }
-
-void adc_sample_enable(void){
-	adc_samples_full = 0;
-	ADCSRA |= (1 << ADIE);
-}
-
-void adc_sample_disable(void){
-	adc_samples_full = 1;
-	ADCSRA &= ~(1<<ADIE); // Disable interrupt
-}
-
 
 // backstep through gain stages of the circuit to find initial value
 int32_t find_load_voltage(uint16_t adc_measurement){
@@ -112,27 +101,6 @@ void calculate_inst_power(int32_t voltage[], int32_t current[], uint8_t samples,
 	return;
 }
 
-uint32_t square_root(uint32_t n)
-{
-	uint32_t result = 0;
-	uint32_t bit = 1UL << 30;
-
-	// Start with the highest power of four <= n
-	while (bit > n)
-	bit >>= 2;
-	while (bit != 0) {
-		if (n >= result + bit) {
-			n -= result + bit;
-			result = (result >> 1) + bit;
-			} else {
-			result >>= 1;
-		}
-		bit >>= 2;
-	}
-
-	return result;
-}
-
 
 // Calculate rms used for testing 
 double calculate_rms(const int32_t *samples, int32_t count) {
@@ -148,17 +116,7 @@ double calculate_rms(const int32_t *samples, int32_t count) {
 	return sqrt(sum_of_squares / count);
 }
 
-uint16_t calculate_peak(const uint16_t values[], uint8_t samples){
-	// Just takes the largest value within the sample set
-	// Possible improvement could instead use if value[i-1] < value[i] < value[i+1] & and averaging these peak values.
-	uint16_t peak_value = 0;
-	for(uint8_t i = 0; i<samples; i++){
-		if (values[i] > peak_value){
-			peak_value = values[i];
-		}
-	}
-	return peak_value;
-}
+
 
 
 /////// ISR ///////
@@ -166,47 +124,56 @@ uint16_t calculate_peak(const uint16_t values[], uint8_t samples){
 ISR(ADC_vect) { // ADC conversion complete interrupt
 	if (!start_sampling) return;
 	// sample adc
-	// alternate between voltage and current adc
+	// sample voltage then current adc
 	
 	// Store values from most recent conversion
-	/*
-	uint8_t value_low = ADCL;
-	uint16_t value_high = ADCH << 8;
-	uint16_t adc_val = value_high | value_low;
-	*/
 	uint16_t adc_val = ADC;
 	
 	if (voltage_read){
 		// Log the voltage adc sample in array
 		voltage[idx] = adc_val;
-			
-		// Switch to the current sense channel
-		ADMUX &= (0xF0); // Lower MUX bits
-		ADMUX |= CURRENT_ADC;
-		voltage_read = 0;
-			
 	} else {
 		// Store current adc sample in array
 		current[idx] = adc_val;
-			
-		// Switch to voltage sense channel
-		ADMUX &= (0xF0); // Lower MUX bits
-		ADMUX |= VOLTAGE_ADC; // theory - reading vzc
-		voltage_read = 1;
-			
-		// increment array index
-		idx++;
-		if (idx == SAMPLES_TO_TAKE){
-			idx = 0;
-			adc_sample_disable();
+	}
+	// increment array index
+	idx++;
+	if (idx == SAMPLES_TO_TAKE){
+		// Reset the index
+		idx = 0;
+		// If the full array was current, change flag
+		if (!voltage_read){
+			adc_samples_full = 1;
+		} else {
+			// Enable interrupt for current sampling
+			EIMSK |= (1 << INT0);
 		}
+		// Disable this interrupt
+		ADCSRA &= ~(1<<ADIE);
+		start_sampling = 0;
 	}
 }
 
 ISR(INT0_vect){
-	adc_sample_enable();
-	voltage_read = 1;
+	// Enable the adc interrupts
+	ADCSRA |= (1 << ADIE);
+	
+	// channel switching
+	if (voltage_read){
+		// Switch to the current sense channel
+		// second to be sampled
+		voltage_read = 0;
+		ADMUX &= (0xF0); // Lower MUX bits
+		ADMUX |= CURRENT_ADC;
+	} else {
+		// Switch to voltage sense channel
+		// first to be sampled
+		voltage_read = 1;
+		ADMUX &= (0xF0); // Lower MUX bits
+		ADMUX |= VOLTAGE_ADC;
+	}
+	
+	idx = 0;
 	start_sampling = 1;
 	EIMSK &= ~(1 << INT0); // Disable (this) INT0 interrupt
-	ADMUX = (ADMUX & 0xF0) | VOLTAGE_ADC;
 }

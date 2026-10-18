@@ -19,10 +19,6 @@ void adc_init(void);
 
 void zero_crossing_init(void);
 
-// Enable and disable the adc sampling
-void adc_sample_enable(void);
-void adc_sample_disable(void);
-
 // Read the adc value in a specified channel
 uint16_t adc_read(uint8_t chan);
 // Convert an adc reading to mV
