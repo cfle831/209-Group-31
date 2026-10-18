@@ -57,8 +57,6 @@ int main(void)
 			transmit_string("-"); // Testing
 			transmit_new_line();
 			
-			// Approximate half a step back for current values to prevent perceived phase shift
-			
 			transmit_string("--"); // Testing
 			transmit_new_line();
 			

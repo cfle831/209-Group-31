@@ -28,7 +28,7 @@ void set_duty_cycle(uint8_t percentage){
 
 void timer2_init(void){
 	TCCR2A |= (1<<WGM21);
-	TCCR2B |= (1<<CS22) | (1<<CS20); // Prescaler 64 - CS22
+	TCCR2B |= (1<<CS22); // Prescaler 64 - CS22
 	OCR2A = 124; // For ~ 1ms                                                                                    
 	TCNT2 = 0;
 	TIMSK2 |= (1<<OCIE2A);	

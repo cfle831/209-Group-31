@@ -40,6 +40,9 @@ void adc_init(void){
 	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
 	
 	ADCSRA |= (1 << ADSC); // dummy conversion to settle values
+	while(!(ADCSRA  & (1<<ADIF)));
+	// Enable adc interrupts
+	ADCSRA |= (1 << ADIE);
 }
 
 // backstep through gain stages of the circuit to find initial value
@@ -122,7 +125,7 @@ double calculate_rms(const int16_t *samples, uint8_t count) {
 /////// ISR ///////
 
 ISR(ADC_vect) { // ADC conversion complete interrupt
-	if (!start_sampling) return;
+	if (!start_sampling || adc_samples_full) return;
 	// sample adc
 	// sample voltage then current adc
 	
@@ -139,40 +142,30 @@ ISR(ADC_vect) { // ADC conversion complete interrupt
 	// increment array index
 	idx++;
 	if (idx == SAMPLES_TO_TAKE){
-		// Reset the index
-		idx = 0;
+
 		// If the full array was current, change flag
 		if (!voltage_read){
+			// Switch to voltage next time
+			voltage_read = 1;
+			ADMUX &= (0xF0); // Lower MUX bits
+			ADMUX |= VOLTAGE_ADC;
+			// Start power calculations
 			adc_samples_full = 1;
 		} else {
 			// Enable interrupt for current sampling
+			voltage_read = 0;
+			ADMUX &= (0xF0); // Lower MUX bits
+			ADMUX |= CURRENT_ADC;
 			EIMSK |= (1 << INT0);
 		}
-		// Disable this interrupt
-		ADCSRA &= ~(1<<ADIE);
+		// Reset the index
+		idx = 0;
+		// stop sampling until next INT0 interrupt
 		start_sampling = 0;
 	}
 }
 
 ISR(INT0_vect){
-	// Enable the adc interrupts
-	ADCSRA |= (1 << ADIE);
-	
-	// channel switching
-	if (voltage_read){
-		// Switch to the current sense channel
-		// second to be sampled
-		voltage_read = 0;
-		ADMUX &= (0xF0); // Lower MUX bits
-		ADMUX |= CURRENT_ADC;
-	} else {
-		// Switch to voltage sense channel
-		// first to be sampled
-		voltage_read = 1;
-		ADMUX &= (0xF0); // Lower MUX bits
-		ADMUX |= VOLTAGE_ADC;
-	}
-	
 	idx = 0;
 	start_sampling = 1;
 	EIMSK &= ~(1 << INT0); // Disable (this) INT0 interrupt
