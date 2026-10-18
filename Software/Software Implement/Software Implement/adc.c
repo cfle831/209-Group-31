@@ -83,14 +83,14 @@ uint16_t adc_convert_mv(uint16_t adc_count){
 	return value;
 }
 
-
+/*
 // Edits the input array
 void approximate_step_back_all(uint16_t values[], uint8_t samples){
 	for (uint8_t i = 1 ; i<samples; i++){
 		values[i] = ((values[i] + values[i-1])>>1);
 	}
 }
-
+*/
 
 // Returns an array in mW
 void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples, int32_t array_to_fill[]){

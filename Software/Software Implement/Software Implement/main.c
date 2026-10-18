@@ -27,9 +27,9 @@ extern volatile uint16_t current[SAMPLES_TO_TAKE];
 
 int main(void)
 {
-	volatile int16_t input_voltage[SAMPLES_TO_TAKE]; // mV
-	volatile int16_t load_current[SAMPLES_TO_TAKE]; // mA
-	volatile int32_t instantaneous_power[SAMPLES_TO_TAKE]; // mW
+	int16_t input_voltage[SAMPLES_TO_TAKE]; // mV
+	int16_t load_current[SAMPLES_TO_TAKE]; // mA
+	int32_t instantaneous_power[SAMPLES_TO_TAKE]; // mW
 	usart_init(12);
 
 	
@@ -58,7 +58,6 @@ int main(void)
 			transmit_new_line();
 			
 			// Approximate half a step back for current values to prevent perceived phase shift
-			approximate_step_back_all(current, SAMPLES_TO_TAKE);
 			
 			transmit_string("--"); // Testing
 			transmit_new_line();

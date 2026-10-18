@@ -34,7 +34,7 @@ int16_t find_load_current(uint16_t adc_measurement);
 
 uint32_t square_root(uint32_t n);
 // Approximates half a step back to reduce percieved phase shift
-void approximate_step_back_all(uint16_t values[], uint8_t samples);
+//void approximate_step_back_all(uint16_t values[], uint8_t samples);
 
 // for testing
 double calculate_rms(const int16_t *samples, uint8_t count);
