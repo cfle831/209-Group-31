@@ -25,19 +25,19 @@ uint16_t adc_read(uint8_t chan);
 uint16_t adc_convert_mv(uint16_t adc_count);
 
 // Calculate instantaneous power from stored current and voltage readings (in mV & mA) returns power in mW  
-void calculate_inst_power(int32_t voltage[], int32_t current[], uint8_t samples, int16_t array_to_fill[]);
+void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples, int32_t array_to_fill[]);
 
 // Removes gain's and offsets to find the input signal's values
-int32_t find_load_voltage(uint16_t adc_measurement);
+int16_t find_load_voltage(uint16_t adc_measurement);
 
-int32_t find_load_current(uint16_t adc_measurement);
+int16_t find_load_current(uint16_t adc_measurement);
 
 uint32_t square_root(uint32_t n);
 // Approximates half a step back to reduce percieved phase shift
 void approximate_step_back_all(uint16_t values[], uint8_t samples);
 
 // for testing
-double calculate_rms(const int32_t *samples, int32_t count);
+double calculate_rms(const int16_t *samples, uint8_t count);
 
 
 #endif

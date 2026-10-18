@@ -30,11 +30,9 @@ int main(void)
 {
 	volatile int16_t input_voltage[SAMPLES_TO_TAKE]; // mV
 	volatile int16_t load_current[SAMPLES_TO_TAKE]; // mA
-	volatile int16_t instantaneous_power[SAMPLES_TO_TAKE]; // mW
+	volatile int32_t instantaneous_power[SAMPLES_TO_TAKE]; // mW
 	usart_init(12);
-	
-	transmit_text("start", 5); //
-	transmit_new_line();		//
+
 	
 	pwm_init(); // in timer.c
 	timer2_init(); // For display updating
@@ -65,25 +63,28 @@ int main(void)
 			// Calculate instantaneous power
 			calculate_inst_power(input_voltage, load_current, SAMPLES_TO_TAKE, instantaneous_power);
 			
+			/*
 			//  testing
-			transmit_string("Voltage");
+			transmit_string("adc");
 			transmit_new_line();
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE;i++){
-				transmit_string(decimal_to_char(voltage[i]));
-				transmit_string(" ");
-				transmit_string(decimal_to_char(i));
+				transmit_string(decimal_to_char(current[i]));
 				transmit_new_line();
 			}
 			
-			transmit_string("Current");
+			transmit_string("current");
 			transmit_new_line();
 			for(uint8_t i = 0;i<SAMPLES_TO_TAKE;i++){
-				transmit_string(decimal_to_char(current[i]));
-				transmit_string(" ");
-				transmit_string(decimal_to_char(i));
+				transmit_string(decimal_to_char(load_current[i]));
 				transmit_new_line();
 			}
+			*/
+			double rms_value = (calculate_rms(input_voltage, SAMPLES_TO_TAKE));
+			change_display_value(rms_value);
+			transmit_string(decimal_to_char(rms_value));
+			transmit_new_line();
 			// End of testing 
+			
 			
 			// Enable zero crossing detection
 			EIMSK |= (1 << INT0);

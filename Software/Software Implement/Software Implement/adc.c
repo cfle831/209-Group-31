@@ -43,37 +43,37 @@ void adc_init(void){
 }
 
 // backstep through gain stages of the circuit to find initial value
-int32_t find_load_voltage(uint16_t adc_measurement){
+int16_t find_load_voltage(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Vmeas Opamp: 1
 	* 2.11 V offset 
 	* Input voltage divider: 0.04511
-	* Corrective value 1.1
+	* Corrective value 0.7109
 	*/
 	
 	int32_t return_value = ((int32_t)adc_measurement-432)/0.817; // Finding exact offset voltage is very important for accuracy
 	return_value *= 22; //   (0.04511)^-1
-	return_value *= 5000*1.1;
+	return_value *= 5000;
 	return_value /= 1024;
 	return return_value;
 }
 
-int32_t find_load_current(uint16_t adc_measurement){
+int16_t find_load_current(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Imeas Opamp:  2.47177
 	* Offset: 2.03 V 
 	* Input voltage divider: V= I * Rshunt so I = V / 0.5021
-	* Corrective value: 1.78
+	* Corrective value: 0.8763
 	*/
 	int32_t return_value = adc_measurement;
 	return_value -= 415;
 	
 	return_value *= 5000; // to get pure ac value in mV
 	return_value /= 1024;
-	return_value /= (2.47177*0.817*0.5021);
-	return_value *= 1.78;
+	return_value /= (2.4718*0.817*0.5021);
+	return_value *= 0.8763;
 	return (return_value);
 }
 
@@ -93,7 +93,7 @@ void approximate_step_back_all(uint16_t values[], uint8_t samples){
 
 
 // Returns an array in mW
-void calculate_inst_power(int32_t voltage[], int32_t current[], uint8_t samples, int16_t array_to_fill[]){
+void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples, int32_t array_to_fill[]){
 	
 	for (uint8_t i = 0; i<samples; i++){
 		array_to_fill[i] = (voltage[i] * current[i] / 1000);
@@ -103,12 +103,12 @@ void calculate_inst_power(int32_t voltage[], int32_t current[], uint8_t samples,
 
 
 // Calculate rms used for testing 
-double calculate_rms(const int32_t *samples, int32_t count) {
+double calculate_rms(const int16_t *samples, uint8_t count) {
 	
 
 	double sum_of_squares = 0.0;
 
-	for (int32_t i = 0; i < count; i++) {
+	for (uint8_t i = 0; i < count; i++) {
 		double val = (double)samples[i];
 		sum_of_squares += val * val;
 	}
