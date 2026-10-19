@@ -61,7 +61,7 @@ int16_t find_load_voltage(uint16_t adc_measurement){
 	return_value *= 22; //   (0.04511)^-1
 	return_value *= 1000*V_REF;
 	return_value /= 1024;
-	return_value*= 1.02;
+	//return_value*= 1.02;
 	return return_value;
 }
 
@@ -69,17 +69,17 @@ int16_t find_load_current(uint16_t adc_measurement){
 	/* Gain values in direction towards measurement pins:
 	* 1st order filter: 0.817
 	* Imeas Opamp:  2.47177
-	* Offset: 2.03 V 
+	* Offset: 408 adc counts 
 	* Input voltage divider: V= I * Rshunt so I = V / 0.5021
-	* Corrective value: 0.8763
+	* Corrective value: 1.1
 	*/
 	int32_t return_value = adc_measurement;
-	return_value -= 415;
+	return_value -= 408;
 	
 	return_value *= 1000*V_REF; // to get pure ac value in mV
 	return_value /= 1024;
 	return_value /= (2.4718*0.817*0.5021);
-	return_value *= 0.8763;
+	//return_value *= 1.1;
 	return (return_value);
 }
 
@@ -94,7 +94,7 @@ uint16_t adc_convert_mv(uint16_t adc_count){
 void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples, int32_t array_to_fill[]){
 	
 	for (uint8_t i = 0; i<samples; i++){
-		array_to_fill[i] = (voltage[i] * current[i] / 1000);
+		array_to_fill[i] = ((int32_t)voltage[i] * current[i] / 1000);
 	}
 	return;
 }

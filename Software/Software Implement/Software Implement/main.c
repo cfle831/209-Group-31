@@ -23,6 +23,8 @@ volatile uint8_t start_sampling = 0;
 extern volatile int16_t voltage[SAMPLES_TO_TAKE];
 extern volatile int16_t current[SAMPLES_TO_TAKE];
 
+volatile uint8_t testing_count = 0;
+
 
 int main(void)
 {
@@ -63,16 +65,14 @@ int main(void)
 			calculate_inst_power(voltage, current, SAMPLES_TO_TAKE, instantaneous_power);
 			
 			// Testing 
-			double rms_value = (calculate_rms(current, SAMPLES_TO_TAKE));
-			change_display_value(rms_value);
-			
-			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				transmit_string(decimal_to_char(current[i]));
-				transmit_string(" ");
-				transmit_string(decimal_to_char(i));
-				transmit_new_line();
-			}
-			break;
+			double rms_voltage = (calculate_rms(voltage, SAMPLES_TO_TAKE));
+			double rms_current = (calculate_rms(current, SAMPLES_TO_TAKE));
+			change_display_value(decimal_to_char((int32_t)(rms_current*rms_voltage/1000)));
+			transmit_string(decimal_to_char(rms_current*rms_voltage/1000));
+			transmit_string(" ");
+			transmit_string(decimal_to_char(testing_count));
+			transmit_new_line();
+			testing_count++;
 			
 			/*transmit_string(decimal_to_char(calculate_real_power(instantaneous_power, SAMPLES_TO_TAKE)));
 			transmit_new_line();
