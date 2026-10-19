@@ -42,7 +42,7 @@ void adc_init(void){
 	ADMUX |= VOLTAGE_ADC;
 	
 	ADCSRA |= (1 << ADSC); // dummy conversion to settle values
-	while(!(ADCSRA  & (1<<ADIF)));
+	while(!(ADCSRA  & (1<<ADIF))); // Wait for dummy convert to finish
 	// Enable adc interrupts
 	ADCSRA |= (1 << ADIE);
 }
@@ -90,25 +90,32 @@ uint16_t adc_convert_mv(uint16_t adc_count){
 }
 
 
-// Returns an array in mW
-void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples, int32_t array_to_fill[]){
-	
-	for (uint8_t i = 0; i<samples; i++){
-		array_to_fill[i] = ((int32_t)voltage[i] * current[i] / 1000);
-	}
-	return;
+int32_t calculate_instantaneous_power_sample(int16_t v_mV, int16_t i_mA) {
+	// (mV * mA) / 1000 = mW
+	return ((int32_t)v_mV * (int32_t)i_mA) / 1000L;
 }
 
-// Average the instantaneous power array
-int32_t calculate_real_power(int32_t inst_power[], uint8_t samples){
-	int32_t max_value = 0;
-	for (uint8_t i = 0; i<samples; i++){
-		if (inst_power[i] > max_value){
-			max_value = inst_power[i];
-		}
+// Array version: Use this only if you need to log or transmit full power waveforms
+void calculate_instantaneous_power_array(const int16_t voltage[], const int16_t current[], uint8_t samples, int32_t inst_power[]) {
+	for (uint8_t i = 0; i < samples; i++) {
+		inst_power[i] = calculate_instantaneous_power_sample(voltage[i], current[i]);
 	}
-	return max_value;
 }
+
+// Real power calculation: Accumulates instantaneous power across all samples in one pass
+int32_t calculate_real_power(const int16_t voltage[], const int16_t current[], uint8_t samples) {
+	if (samples == 0) return 0;
+
+	int64_t accumulated_power = 0;
+	
+	for (uint8_t i = 0; i < samples; i++) {
+		accumulated_power += calculate_instantaneous_power_sample(voltage[i], current[i]);
+	}
+
+	return (int32_t)(accumulated_power / samples);
+}
+
+
 
 // show raw adc values for testing
 void print_raw_waveform(void){

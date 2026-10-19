@@ -22,12 +22,9 @@ volatile uint8_t adc_samples_full = 0;
 volatile uint8_t start_sampling = 0;
 extern volatile int16_t voltage[SAMPLES_TO_TAKE];
 extern volatile int16_t current[SAMPLES_TO_TAKE];
-volatile int16_t volt_for_ave[AVE_COUNT];
-volatile int16_t currrent_for_ave[AVE_COUNT];
-volatile int16_t ave_voltage = 0;
-volatile int16_t ave_current = 0;
-volatile uint8_t values_stored_for_average = 0;
-volatile uint8_t average_index = 0;
+
+
+
 volatile uint8_t testing_count = 0;
 
 
@@ -53,8 +50,7 @@ int main(void)
     while (1) 
     {
 		if (adc_samples_full){
-			
-			
+			transmit_string("a");
 			// Convert voltage samples to input voltage
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				voltage[i] = find_load_voltage(voltage[i]);
@@ -66,48 +62,35 @@ int main(void)
 			}
 			
 			// Calculate instantaneous power
-			//calculate_inst_power(voltage, current, SAMPLES_TO_TAKE, instantaneous_power);
+			calculate_instantaneous_power_array(voltage, current, SAMPLES_TO_TAKE, instantaneous_power);
+			
+			
 			// Testing 
 			double rms_voltage = (calculate_rms(voltage, SAMPLES_TO_TAKE));
 			double rms_current = (calculate_rms(current, SAMPLES_TO_TAKE));
 			
-			volt_for_ave[average_index] = rms_voltage;
-			currrent_for_ave[average_index] = rms_current;
+
 			
-			if (values_stored_for_average < AVE_COUNT){
-				values_stored_for_average++;
+			int32_t real_power[SAMPLES_TO_TAKE];
+			calculate_instantaneous_power_array(voltage, current, SAMPLES_TO_TAKE, real_power);
+			//transmit_string(decimal_to_char(real_power));
+			//transmit_new_line();
+			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
+				transmit_string(decimal_to_char(real_power[i]));
+				transmit_string(" ");
+				transmit_string(decimal_to_char(i));
+				transmit_new_line();
 			}
-			average_index++;
-			
-			if (average_index > (AVE_COUNT-1)) {
-				average_index = 0;
-			}
-			for (uint8_t i = 0; i < values_stored_for_average; i++){
-				ave_voltage+= (volt_for_ave[i] / values_stored_for_average);
-				ave_current += (currrent_for_ave[i] / values_stored_for_average);
-			}
-			
-			change_display_value(ave_current);
-			transmit_string(decimal_to_char(rms_current));
-			transmit_string(" ");
-			transmit_string(decimal_to_char(ave_current));
-			transmit_new_line();
-			testing_count++;
-			
-			ave_voltage = 0;
-			ave_current = 0;
-			
-			/*transmit_string(decimal_to_char(calculate_real_power(instantaneous_power, SAMPLES_TO_TAKE)));
-			transmit_new_line();
-			*/
-			
+			break;
 			
 			// End of testing 
 			
+			TIMSK0 |= (1<<OCIE0A); //enable Display interrupt
 			
-			// Enable zero crossing detection
+			_delay_ms(500); // Ensure LED display is on for long enough to read the number
+
 			adc_samples_full = 0;
-			EIMSK |= (1 << INT0);
+			EIMSK |= (1 << INT0); // Enable zero crossing detection
 			
 			
 		} 

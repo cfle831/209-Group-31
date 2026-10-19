@@ -24,10 +24,14 @@ uint16_t adc_read(uint8_t chan);
 // Convert an adc reading to mV
 uint16_t adc_convert_mv(uint16_t adc_count);
 
-// Calculate instantaneous power from stored current and voltage readings (in mV & mA) returns power in mW  
-void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples, int32_t array_to_fill[]);
+// Calculates instantaneous power for a single voltage/current pair (in mW)
+int32_t calculate_instantaneous_power_sample(int16_t v_mV, int16_t i_mA);
 
-int32_t calculate_real_power(int32_t inst_power[], uint8_t samples);
+// Populates an array with instantaneous power values (in mW) - optional for waveform logging
+void calculate_instantaneous_power_array(const int16_t voltage[], const int16_t current[], uint8_t samples, int32_t inst_power[]);
+
+// Calculates True Real Power directly from voltage and current arrays (in mW)
+int32_t calculate_real_power(const int16_t voltage[], const int16_t current[], uint8_t samples);
 
 // Removes gain's and offsets to find the input signal's values
 int16_t find_load_voltage(uint16_t adc_measurement);

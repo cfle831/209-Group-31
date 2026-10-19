@@ -33,7 +33,7 @@ void timer2_init(void){
 	TCCR2B |= (1<<CS22); // Prescaler 64 - CS22
 	OCR2A = 124; // For ~ 1ms                                                                                    
 	TCNT2 = 0;
-	TIMSK2 |= (1<<OCIE2A);	
+	//TIMSK2 |= (1<<OCIE2A);	
 }
 
 void timer0_init(void){
