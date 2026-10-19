@@ -4,6 +4,7 @@
 #include "UART.h"
 #include <string.h>
 #include <stdlib.h>
+// Initialise the UART peripheral
 void usart_init(uint16_t ubrr){
 	
 	// Operating Mode - Async
@@ -25,8 +26,8 @@ void usart_init(uint16_t ubrr){
 }
 
 char string_9_dig[11] = {};
-// Converts a decimal number to a string (char array with terminating null character).
-// Input can handle up to 9 Digits. 
+/* Converts a decimal number to a string (char array with terminating null character).
+* Input can handle up to 9 Digits. */
 char* decimal_to_char(int32_t value)
 {
     uint32_t magnitude;
@@ -61,11 +62,9 @@ void usart_transmit(uint8_t data){
 	 while (!(UCSR0A & (1 << UDRE0)));
 	 UDR0 = data;
 	 
- }
- 
-/* Transmits a string to the UART. Requires a null character Ending the string
-*/
- void transmit_string(char text[]){
+} 
+// Transmits a string to the UART. Requires a null character termination in the array 
+void transmit_string(char text[]){
 	 for (uint8_t i = 0; i<32; i++){
 		 if (text[i] == '\0'){
 			 break;
@@ -73,22 +72,15 @@ void usart_transmit(uint8_t data){
 		 usart_transmit(text[i]);
 	 }
 	 
- }
- /* Transmits a char array to the UART. Requires the length of the string 
- */
- void transmit_text(char text[], uint8_t length){
-	 for (uint8_t i = 0; i<length; i++){
-		 usart_transmit(text[i]);
-	 }
- }
+}
 
- void transmit_new_line(){
+void transmit_new_line(){
 	 usart_transmit('\n');
 	 usart_transmit('\r');
- }
+}
  
 // Transmits two columns of data to UART
- void transmit_excel_two_columns(uint16_t col_1[], uint16_t col_2[], uint8_t samples){
+void transmit_excel_two_columns(uint16_t col_1[], uint16_t col_2[], uint8_t samples){
 	for (uint8_t index = 0; index<samples; index++){
 		transmit_string(decimal_to_char(col_1[index]));
 		usart_transmit(','); usart_transmit(' '); usart_transmit(9);

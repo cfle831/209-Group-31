@@ -14,14 +14,14 @@
 	
 // Initialises PWM registers
 void pwm_init();
-// Changes OCR1B based on the desire duty cycle
+
+// Sets the duty cycle of the PWM for the LED display (Brightness)
 void set_duty_cycle(uint8_t percentage);
 
-// timer for display
+// Timer for LED display
 void timer2_init();
 
-// timer for adc
-
+// Timer for adc sampling
 void timer0_init();
 
 #endif

@@ -30,16 +30,16 @@ volatile uint8_t testing_count = 0;
 
 int main(void)
 {
+	int32_t real_power = 0;
 
-	int32_t instantaneous_power[SAMPLES_TO_TAKE]; // mW
-	usart_init(12);
-
+	usart_init(12); // NEEDS TO BE AN EQUATION
 	
-	pwm_init(); // in timer.c
-	timer0_init();
+	pwm_init(); // in timer.c, for pwm of LED display
+	timer0_init(); // Sampling timer
 	timer2_init(); // For display updating
-	zero_crossing_init(); // in adc.c
-	display_init();
+	zero_crossing_init(); // in adc.c, For starting first 
+	
+	display_init(); 
 	adc_init();
 	sei();
 	
@@ -61,25 +61,26 @@ int main(void)
 				current[i] = find_load_current(current[i]);
 			}
 			
-			// Calculate instantaneous power
-			calculate_instantaneous_power_array(voltage, current, SAMPLES_TO_TAKE, instantaneous_power);
 			
 			
-			// Testing 
-			double rms_voltage = (calculate_rms(voltage, SAMPLES_TO_TAKE));
-			double rms_current = (calculate_rms(current, SAMPLES_TO_TAKE));
+			//double rms_voltage = (calculate_rms(voltage, SAMPLES_TO_TAKE));
+			//double rms_current = (calculate_rms(current, SAMPLES_TO_TAKE));
 			
 
 			
-			int32_t real_power = calculate_real_power(voltage, current, SAMPLES_TO_TAKE);
+			real_power = calculate_real_power(voltage, current, SAMPLES_TO_TAKE);
+			
 			change_display_value(real_power);
 			
+			// Transmit Real power via uart
+			transmit_string("Real Power:");
+			transmit_new_line();
+			transmit_string(decimal_to_char(real_power));
+			transmit_string("mW");
+			transmit_new_line();
+			transmit_new_line();
 			
-			// End of testing 
 			
-			
-			//_delay_ms(500); // Ensure LED display is on for long enough to read the number
-
 			adc_samples_full = 0;
 			EIMSK |= (1 << INT0); // Enable zero crossing detection
 			
