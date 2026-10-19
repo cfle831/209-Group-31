@@ -33,9 +33,9 @@ void adc_init(void){
 	// Enable ADC converter
 	ADCSRA = (1<<ADEN);
 	ADMUX = (1 << REFS0);
-	// Clock prescaler of 16
-	ADCSRA |= (1 << ADPS2);
-	ADCSRB = 0x00;
+	// Clock prescaler of 4
+	ADCSRA |= (1 << ADPS1);
+	ADCSRB = (3<< ADTS0); // For auto trigger on Timer/Counter 0 Compare match A
 	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
 	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
 	
@@ -55,13 +55,14 @@ int16_t find_load_voltage(uint16_t adc_measurement){
 	* Vmeas Opamp: 1
 	* 2.11 V offset 
 	* Input voltage divider: 0.04511
-	* Corrective value 0.7109
+	* Corrective value 1.02
 	*/
 	
 	int32_t return_value = ((int32_t)adc_measurement-432)/0.817; // Finding exact offset voltage is very important for accuracy
 	return_value *= 22; //   (0.04511)^-1
 	return_value *= 1000*V_REF;
 	return_value /= 1024;
+	return_value*= 1.02;
 	return return_value;
 }
 
@@ -89,14 +90,6 @@ uint16_t adc_convert_mv(uint16_t adc_count){
 	return value;
 }
 
-/*
-// Edits the input array
-void approximate_step_back_all(uint16_t values[], uint8_t samples){
-	for (uint8_t i = 1 ; i<samples; i++){
-		values[i] = ((values[i] + values[i-1])>>1);
-	}
-}
-*/
 
 // Returns an array in mW
 void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples, int32_t array_to_fill[]){
@@ -105,6 +98,17 @@ void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples,
 		array_to_fill[i] = (voltage[i] * current[i] / 1000);
 	}
 	return;
+}
+
+// Average the instantaneous power array
+int32_t calculate_real_power(int32_t inst_power[], uint8_t samples){
+	int32_t max_value = 0;
+	for (uint8_t i = 0; i<samples; i++){
+		if (inst_power[i] > max_value){
+			max_value = inst_power[i];
+		}
+	}
+	return max_value;
 }
 
 // show raw adc values for testing
@@ -118,14 +122,14 @@ void print_raw_waveform(void){
 		transmit_new_line();
 	}
 	
-	transmit_string("Current");
+	/*transmit_string("Current");
 	transmit_new_line();
 	for(uint8_t i = 0;i<SAMPLES_TO_TAKE;i++){
 		transmit_string(decimal_to_char(current[i]));
 		transmit_string(" ");
 		transmit_string(decimal_to_char(i));
 		transmit_new_line();
-	}
+	}*/
 }
 
 // Calculate rms used for testing 

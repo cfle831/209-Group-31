@@ -22,18 +22,18 @@ volatile uint8_t adc_samples_full = 0;
 volatile uint8_t start_sampling = 0;
 extern volatile uint16_t voltage[SAMPLES_TO_TAKE];
 extern volatile uint16_t current[SAMPLES_TO_TAKE];
-
+volatile uint8_t testing_number = 0;
 
 
 int main(void)
 {
-	int16_t input_voltage[SAMPLES_TO_TAKE]; // mV
-	int16_t load_current[SAMPLES_TO_TAKE]; // mA
+
 	int32_t instantaneous_power[SAMPLES_TO_TAKE]; // mW
 	usart_init(12);
 
 	
 	pwm_init(); // in timer.c
+	timer0_init();
 	timer2_init(); // For display updating
 	zero_crossing_init(); // in adc.c
 	display_init();
@@ -49,33 +49,41 @@ int main(void)
 		if (adc_samples_full){
 			
 			adc_samples_full = 0;
-			// Using voltage samples get input voltage
+			// Convert voltage samples to input voltage
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				input_voltage[i] = find_load_voltage(voltage[i]);
+				voltage[i] = find_load_voltage(voltage[i]);
 			}
 			
-			// Using current samples get load current
+			// Convert current samples to load current
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				load_current[i] = find_load_current(current[i]);
+				current[i] = find_load_current(current[i]);
 			}
 			
 			// Calculate instantaneous power
-			calculate_inst_power(input_voltage, load_current, SAMPLES_TO_TAKE, instantaneous_power);
+			calculate_inst_power(voltage, current, SAMPLES_TO_TAKE, instantaneous_power);
 			
 			// Testing 
-			double rms_value = (calculate_rms(input_voltage, SAMPLES_TO_TAKE));
+			double rms_value = (calculate_rms(voltage, SAMPLES_TO_TAKE));
 			change_display_value(rms_value);
-			// transmit_string(decimal_to_char(rms_value));
-			//print_raw_waveform();
+			transmit_string(decimal_to_char(rms_value));
+			transmit_string(" ");
+			transmit_string(decimal_to_char(testing_number));
+			testing_number++;
+			transmit_new_line();
+
+			
+			/*transmit_string(decimal_to_char(calculate_real_power(instantaneous_power, SAMPLES_TO_TAKE)));
+			transmit_new_line();
+			*/
+			
+			
 			// End of testing 
 			
 			
 			// Enable zero crossing detection
 			EIMSK |= (1 << INT0);
 			
-		} else if(start_sampling) {
-			ADCSRA |= (1 << ADSC); // Start a conversion
-		}
+		} 
     }
 }
 

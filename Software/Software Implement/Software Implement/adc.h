@@ -27,6 +27,8 @@ uint16_t adc_convert_mv(uint16_t adc_count);
 // Calculate instantaneous power from stored current and voltage readings (in mV & mA) returns power in mW  
 void calculate_inst_power(int16_t voltage[], int16_t current[], uint8_t samples, int32_t array_to_fill[]);
 
+int32_t calculate_real_power(int32_t inst_power[], uint8_t samples);
+
 // Removes gain's and offsets to find the input signal's values
 int16_t find_load_voltage(uint16_t adc_measurement);
 

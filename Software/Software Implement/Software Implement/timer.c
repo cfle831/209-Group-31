@@ -4,6 +4,8 @@
 #include "display.h"
 #include "UART.h"
 
+extern uint8_t start_sampling;
+
 void pwm_init(void){
 	
 	DDRB |= (1 << PINB2); // OE pin as output
@@ -39,7 +41,7 @@ void timer0_init(void){
 	TCCR0B |= (1<<CS00); // No prescaler 
 	
 	OCR0A = 199; // Set compare every 100us, 10khz
-	TCNT0 = 0; // reset timer/counter1
+	TCNT0 = 0; // reset timer/counter0
 	TIMSK0 |= (1<<OCIE0A); //enable compare interrupt
 }
 
@@ -47,4 +49,10 @@ void timer0_init(void){
 
 ISR(TIMER2_COMPA_vect){
 	update_display();
+}
+
+ISR(TIMER0_COMPA_vect){
+	if (start_sampling){
+		ADCSRA |= (1<<ADSC);
+	}
 }
