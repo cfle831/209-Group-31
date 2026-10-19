@@ -8,21 +8,42 @@
 #include <avr/interrupt.h>
 
 
-#define SAMPLES_TO_TAKE			160 //  Possibly should be changed
+#define SAMPLES_TO_TAKE			(160) //  Possibly should be changed
+#define	ADC_RESOLUTION			(1024)
 
 #define VOLTAGE_ADC				(0)
 #define CURRENT_ADC				(1)
 
+// 1st order filter: 0.817
+#define FILTER_GAIN				(0.817)
+
+/* Gain values in direction towards measurement pins:
+* Vmeas Opamp: 1
+* 2.11 V offset ---> 432
+* Input voltage divider: 0.04511
+* Corrective value: 1.05 
+*/
+#define V_OFFSET				(432)
+#define V_CORRECTIVE			(1.05)
+#define VIN_DIVIDER				(0.04511)
+
+/*	CURRENT 
+	Gain values in direction towards measurement pins:
+	1st order filter: 0.817
+	Imeas Opamp:  2.47177
+	Offset: 2.033 ---> 416 adc counts 
+	Input voltage divider: V= I * Rshunt so I = V / 0.5021
+	Corrective value: 1.07
+*/
+#define	I_OFFSET				(416)
+#define I_OPAMP					(2.4718)
+#define R_SHUNT					(0.5021)
+#define I_CORRECTIVE			(1.07)
 
 // Initialise registers for adc 
 void adc_init(void);
 
 void zero_crossing_init(void);
-
-// Read the adc value in a specified channel
-uint16_t adc_read(uint8_t chan);
-// Convert an adc reading to mV
-uint16_t adc_convert_mv(uint16_t adc_count);
 
 // Calculates instantaneous power for a single voltage/current pair (in mW)
 int32_t calculate_instantaneous_power_sample(int16_t v_mV, int16_t i_mA);
@@ -44,6 +65,5 @@ uint32_t square_root(uint32_t n);
 
 // for testing
 double calculate_rms(const int16_t *samples, uint8_t count);
-void print_raw_waveform(void);
 
 #endif
