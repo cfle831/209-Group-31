@@ -17,8 +17,8 @@
 extern volatile uint8_t adc_samples_full; // From main.c
 extern volatile uint8_t start_sampling;
 static volatile uint8_t voltage_read = 1;
-volatile uint16_t voltage[SAMPLES_TO_TAKE];
-volatile uint16_t current[SAMPLES_TO_TAKE];
+volatile int16_t voltage[SAMPLES_TO_TAKE];
+volatile int16_t current[SAMPLES_TO_TAKE];
 static volatile uint8_t idx = 0;
 
 /* in order to acheive a *maximum* sampling frequency of 10kHz, samples must be taken ~100us apart */
