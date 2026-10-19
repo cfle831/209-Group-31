@@ -6,7 +6,7 @@
  */ 
 
 #define F_CPU 2000000UL
-
+#define AVE_COUNT 20
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -22,7 +22,12 @@ volatile uint8_t adc_samples_full = 0;
 volatile uint8_t start_sampling = 0;
 extern volatile int16_t voltage[SAMPLES_TO_TAKE];
 extern volatile int16_t current[SAMPLES_TO_TAKE];
-
+volatile int16_t volt_for_ave[AVE_COUNT];
+volatile int16_t currrent_for_ave[AVE_COUNT];
+volatile int16_t ave_voltage = 0;
+volatile int16_t ave_current = 0;
+volatile uint8_t values_stored_for_average = 0;
+volatile uint8_t average_index = 0;
 volatile uint8_t testing_count = 0;
 
 
@@ -50,7 +55,6 @@ int main(void)
 		if (adc_samples_full){
 			
 			
-			
 			// Convert voltage samples to input voltage
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				voltage[i] = find_load_voltage(voltage[i]);
@@ -62,17 +66,36 @@ int main(void)
 			}
 			
 			// Calculate instantaneous power
-			calculate_inst_power(voltage, current, SAMPLES_TO_TAKE, instantaneous_power);
-			
+			//calculate_inst_power(voltage, current, SAMPLES_TO_TAKE, instantaneous_power);
 			// Testing 
 			double rms_voltage = (calculate_rms(voltage, SAMPLES_TO_TAKE));
 			double rms_current = (calculate_rms(current, SAMPLES_TO_TAKE));
-			change_display_value(decimal_to_char((int32_t)(rms_current*rms_voltage/1000)));
-			transmit_string(decimal_to_char(rms_current*rms_voltage/1000));
+			
+			volt_for_ave[average_index] = rms_voltage;
+			currrent_for_ave[average_index] = rms_current;
+			
+			if (values_stored_for_average < AVE_COUNT){
+				values_stored_for_average++;
+			}
+			average_index++;
+			
+			if (average_index > (AVE_COUNT-1)) {
+				average_index = 0;
+			}
+			for (uint8_t i = 0; i < values_stored_for_average; i++){
+				ave_voltage+= (volt_for_ave[i] / values_stored_for_average);
+				ave_current += (currrent_for_ave[i] / values_stored_for_average);
+			}
+			
+			change_display_value(ave_current);
+			transmit_string(decimal_to_char(rms_current));
 			transmit_string(" ");
-			transmit_string(decimal_to_char(testing_count));
+			transmit_string(decimal_to_char(ave_current));
 			transmit_new_line();
 			testing_count++;
+			
+			ave_voltage = 0;
+			ave_current = 0;
 			
 			/*transmit_string(decimal_to_char(calculate_real_power(instantaneous_power, SAMPLES_TO_TAKE)));
 			transmit_new_line();
