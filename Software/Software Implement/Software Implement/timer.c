@@ -33,7 +33,7 @@ void timer2_init(void){
 	TCCR2B |= (1<<CS22); // Prescaler 64 - CS22
 	OCR2A = 124; // For ~ 1ms                                                                                    
 	TCNT2 = 0;
-	//TIMSK2 |= (1<<OCIE2A);	
+	TIMSK2 |= (1<<OCIE2A);	
 }
 
 void timer0_init(void){
@@ -46,8 +46,8 @@ void timer0_init(void){
 }
 
 /////// ISR ///////
-
-ISR(TIMER2_COMPA_vect){
+// ISR_NOBLOCK is necessary here in order to prevent the LED update from preventing ADC sampling
+ISR(TIMER2_COMPA_vect, ISR_NOBLOCK){
 	update_display();
 }
 

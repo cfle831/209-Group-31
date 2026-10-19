@@ -48,9 +48,9 @@ int main(void)
 	set_duty_cycle(50); 
 	
     while (1) 
-    {
+    {	
 		if (adc_samples_full){
-			transmit_string("a");
+			
 			// Convert voltage samples to input voltage
 			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
 				voltage[i] = find_load_voltage(voltage[i]);
@@ -71,23 +71,14 @@ int main(void)
 			
 
 			
-			int32_t real_power[SAMPLES_TO_TAKE];
-			calculate_instantaneous_power_array(voltage, current, SAMPLES_TO_TAKE, real_power);
-			//transmit_string(decimal_to_char(real_power));
-			//transmit_new_line();
-			for (uint8_t i = 0; i<SAMPLES_TO_TAKE; i++){
-				transmit_string(decimal_to_char(real_power[i]));
-				transmit_string(" ");
-				transmit_string(decimal_to_char(i));
-				transmit_new_line();
-			}
-			break;
+			int32_t real_power = calculate_real_power(voltage, current, SAMPLES_TO_TAKE);
+			change_display_value(real_power);
+			
 			
 			// End of testing 
 			
-			TIMSK0 |= (1<<OCIE0A); //enable Display interrupt
 			
-			_delay_ms(500); // Ensure LED display is on for long enough to read the number
+			//_delay_ms(500); // Ensure LED display is on for long enough to read the number
 
 			adc_samples_full = 0;
 			EIMSK |= (1 << INT0); // Enable zero crossing detection
