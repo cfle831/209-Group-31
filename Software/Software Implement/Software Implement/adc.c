@@ -35,7 +35,6 @@ void adc_init(void){
 	ADMUX = (1 << REFS0);
 	// Clock prescaler of 4
 	ADCSRA |= (1 << ADPS1);
-	ADCSRB = (3<< ADTS0); // For auto trigger on Timer/Counter 0 Compare match A
 	DDRC &= ~(7<<PINC0); // For ADC pins 0, 1, 2 as input
 	DDRD &= ~(1<<PIND2); // Zero Crossing Detection pin as input
 	
