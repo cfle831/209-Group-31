@@ -88,7 +88,7 @@ int main(void)
 			transmit_string(decimal_to_char(rms_voltage/1000));
 			transmit_string(".");
 			transmit_string(decimal_to_char(rms_voltage%1000));
-			transmit_string("mV");
+			transmit_string(" V");
 			transmit_new_line();
 			transmit_new_line();
 			
