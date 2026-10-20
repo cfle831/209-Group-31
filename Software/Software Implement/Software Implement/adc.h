@@ -8,7 +8,7 @@
 #include <avr/interrupt.h>
 
 
-#define SAMPLES_TO_TAKE			(160) //  Possibly should be changed
+#define SAMPLES_TO_TAKE			(160) 
 #define	ADC_RESOLUTION			(1024)
 
 #define VOLTAGE_ADC				(0)
@@ -17,28 +17,29 @@
 // 1st order filter: 0.817
 #define FILTER_GAIN				(0.817)
 
-/* Gain values in direction towards measurement pins:
+/* VOLTAGE
+* Gain values in direction towards measurement pins:
 * Vmeas Opamp: 1
 * 2.11 V offset ---> 432
 * Input voltage divider: 0.04511
 * Corrective value: 1.05 
 */
-#define V_OFFSET				(432)
-#define V_CORRECTIVE			(1.05)
+#define V_OFFSET				(445)
+#define V_CORRECTIVE			(1.0)
 #define VIN_DIVIDER				(0.04511)
 
 /*	CURRENT 
-	Gain values in direction towards measurement pins:
-	1st order filter: 0.817
-	Imeas Opamp:  2.47177
-	Offset: 2.033 ---> 416 adc counts 
-	Input voltage divider: V= I * Rshunt so I = V / 0.5021
-	Corrective value: 1.07
+Gain values in direction towards measurement pins:
+1st order filter: 0.817
+Imeas Opamp:  2.47177
+Offset: 2.033 ---> 416 adc counts 
+Input voltage divider: V= I * Rshunt so I = V / 0.5021
+Corrective value: 1.07
 */
-#define	I_OFFSET				(415)
+#define	I_OFFSET				(440)
 #define I_OPAMP					(2.4718)
 #define R_SHUNT					(0.5021)
-#define I_CORRECTIVE			(1.07)
+#define I_CORRECTIVE			(1.0)
 
 // Initialise registers for adc 
 void adc_init(void);

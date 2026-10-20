@@ -73,12 +73,14 @@ int main(void)
 			change_display_value(real_power);
 			
 			// Transmit Real power via uart
+			/*
 			transmit_string("Real Power:");
 			transmit_new_line();
 			transmit_string(decimal_to_char(real_power));
 			transmit_string("mW");
 			transmit_new_line();
 			transmit_new_line();
+			*/
 			
 			
 			adc_samples_full = 0;
