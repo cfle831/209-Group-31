@@ -6,6 +6,7 @@
  */ 
 
 #define F_CPU 2000000UL
+#define BAUD 9600
 #define AVE_COUNT 20
 #include <avr/io.h>
 #include <util/delay.h>
@@ -32,8 +33,7 @@ int main(void)
 {
 	int32_t real_power = 0;
 
-	usart_init(12); // NEEDS TO BE AN EQUATION
-	
+	usart_init(((F_CPU/((uint32_t)16*BAUD)) - 1)); // Initialise UART peripheral
 	pwm_init(); // in timer.c, for pwm of LED display
 	timer0_init(); // Sampling timer
 	timer2_init(); // For display updating

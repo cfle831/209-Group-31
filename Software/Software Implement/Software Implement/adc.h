@@ -35,7 +35,7 @@
 	Input voltage divider: V= I * Rshunt so I = V / 0.5021
 	Corrective value: 1.07
 */
-#define	I_OFFSET				(416)
+#define	I_OFFSET				(415)
 #define I_OPAMP					(2.4718)
 #define R_SHUNT					(0.5021)
 #define I_CORRECTIVE			(1.07)
