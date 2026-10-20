@@ -24,7 +24,7 @@
 * Input voltage divider: 0.04511
 * Corrective value: 1.05 
 */
-#define V_OFFSET				(445)
+#define V_OFFSET				(432)
 #define V_CORRECTIVE			(1.0)
 #define VIN_DIVIDER				(0.04511)
 
@@ -36,7 +36,7 @@ Offset: 2.033 ---> 416 adc counts
 Input voltage divider: V= I * Rshunt so I = V / 0.5021
 Corrective value: 1.07
 */
-#define	I_OFFSET				(440)
+#define	I_OFFSET				(415)
 #define I_OPAMP					(2.4718)
 #define R_SHUNT					(0.5021)
 #define I_CORRECTIVE			(1.0)
