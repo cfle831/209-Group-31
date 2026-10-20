@@ -63,24 +63,29 @@ int main(void)
 			
 			
 			
-			//double rms_voltage = (calculate_rms(voltage, SAMPLES_TO_TAKE));
+			double rms_voltage = (calculate_rms(voltage, SAMPLES_TO_TAKE));
 			//double rms_current = (calculate_rms(current, SAMPLES_TO_TAKE));
 			
 
 			
 			real_power = calculate_real_power(voltage, current, SAMPLES_TO_TAKE);
 			
-			change_display_value(real_power);
+			change_display_value(rms_voltage);
 			
 			// Transmit Real power via uart
-			/*
+			
 			transmit_string("Real Power:");
 			transmit_new_line();
 			transmit_string(decimal_to_char(real_power));
 			transmit_string("mW");
 			transmit_new_line();
+			transmit_string("RMS Voltage:");
 			transmit_new_line();
-			*/
+			transmit_string(decimal_to_char(rms_voltage));
+			transmit_string("mV");
+			transmit_new_line();
+			transmit_new_line();
+			
 			
 			
 			adc_samples_full = 0;
