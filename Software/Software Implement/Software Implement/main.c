@@ -31,7 +31,9 @@ volatile uint8_t testing_count = 0;
 
 int main(void)
 {
-	int32_t real_power = 0;
+	int32_t real_power_mW = 0;
+	int32_t real_power_W = 0;
+	
 
 	usart_init(((F_CPU/((uint32_t)16*BAUD)) - 1)); // Initialise UART peripheral
 	pwm_init(); // in timer.c, for pwm of LED display
@@ -63,25 +65,29 @@ int main(void)
 			
 			
 			
-			double rms_voltage = (calculate_rms(voltage, SAMPLES_TO_TAKE));
-			//double rms_current = (calculate_rms(current, SAMPLES_TO_TAKE));
+			int16_t rms_voltage = (int16_t)(calculate_rms(voltage, SAMPLES_TO_TAKE));
+			//int16_t rms_current = (int16_t)(calculate_rms(current, SAMPLES_TO_TAKE));
 			
 
 			
-			real_power = calculate_real_power(voltage, current, SAMPLES_TO_TAKE);
-			
+			real_power_mW = calculate_real_power(voltage, current, SAMPLES_TO_TAKE);
+			real_power_W = real_power_mW / 1000;
 			change_display_value(rms_voltage);
 			
 			// Transmit Real power via uart
 			
 			transmit_string("Real Power:");
 			transmit_new_line();
-			transmit_string(decimal_to_char(real_power));
-			transmit_string("mW");
+			transmit_string(decimal_to_char(real_power_W));
+			transmit_string(".");
+			transmit_string(decimal_to_char(real_power_mW - real_power_W*1000));
+			transmit_string(" W");
 			transmit_new_line();
 			transmit_string("RMS Voltage:");
 			transmit_new_line();
-			transmit_string(decimal_to_char(rms_voltage));
+			transmit_string(decimal_to_char(rms_voltage/1000));
+			transmit_string(".");
+			transmit_string(decimal_to_char(rms_voltage%1000));
 			transmit_string("mV");
 			transmit_new_line();
 			transmit_new_line();
